@@ -1,0 +1,6 @@
+{
+  "name": "RhythmGame.Editor",
+  "rootNamespace": "RhythmGame.Editor",
+  "references": ["RhythmGame.Runtime", "Unity.ugui", "Unity.InputSystem"],
+  "includePlatforms": ["Editor"]
+}

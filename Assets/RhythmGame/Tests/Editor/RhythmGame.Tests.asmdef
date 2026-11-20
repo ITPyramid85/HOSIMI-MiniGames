@@ -1,0 +1,7 @@
+{
+  "name": "RhythmGame.Tests",
+  "rootNamespace": "RhythmGame.Tests",
+  "references": ["RhythmGame.Runtime"],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}

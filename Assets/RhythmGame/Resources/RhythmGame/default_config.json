@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 2,
+  "starterCharacterId": "whale",
+  "characters": [
+    {"id": "whale", "portraitResource": "RhythmGame/Portraits/whale", "purchasePrice": 0, "physicalPrice": 3000, "merchUrl": "", "worldColorHtml": "#BDE6FF", "maxLevel": 100, "baseScoreAtLevel1": 100, "baseScoreAtMaxLevel": 200},
+    {"id": "turtle", "portraitResource": "RhythmGame/Portraits/turtle", "purchasePrice": 1200, "physicalPrice": 3000, "merchUrl": "", "worldColorHtml": "#FFE3A3", "maxLevel": 100, "baseScoreAtLevel1": 100, "baseScoreAtMaxLevel": 200},
+    {"id": "lion", "portraitResource": "RhythmGame/Portraits/lion", "purchasePrice": 1500, "physicalPrice": 3000, "merchUrl": "", "worldColorHtml": "#CFF5E7", "maxLevel": 100, "baseScoreAtLevel1": 100, "baseScoreAtMaxLevel": 200},
+    {"id": "fox", "portraitResource": "RhythmGame/Portraits/fox", "purchasePrice": 1800, "physicalPrice": 3000, "merchUrl": "", "worldColorHtml": "#D3CCF7", "maxLevel": 100, "baseScoreAtLevel1": 100, "baseScoreAtMaxLevel": 200},
+    {"id": "crane", "portraitResource": "RhythmGame/Portraits/crane", "purchasePrice": 2400, "physicalPrice": 3000, "merchUrl": "", "worldColorHtml": "#F2CC98", "maxLevel": 100, "baseScoreAtLevel1": 100, "baseScoreAtMaxLevel": 200},
+    {"id": "squirrel", "portraitResource": "RhythmGame/Portraits/squirrel", "purchasePrice": 3000, "physicalPrice": 3000, "merchUrl": "", "worldColorHtml": "#CDEFF7", "maxLevel": 100, "baseScoreAtLevel1": 100, "baseScoreAtMaxLevel": 200}
+  ],
+  "charts": [
+    {
+      "id": "first_beat_easy", "songId": "first_beat", "songTitle": "初始节拍（示例）",
+      "difficulty": "Easy", "difficultyLevel": 1, "noteCount": 100,
+      "audioResource": "", "chartResource": "", "isExample": true, "requiredClearChartId": ""
+    },
+    {
+      "id": "first_beat_normal", "songId": "first_beat", "songTitle": "初始节拍（示例）",
+      "difficulty": "Normal", "difficultyLevel": 4, "noteCount": 250,
+      "audioResource": "", "chartResource": "", "isExample": true, "requiredClearChartId": "first_beat_easy"
+    },
+    {
+      "id": "first_beat_hard", "songId": "first_beat", "songTitle": "初始节拍（示例）",
+      "difficulty": "Hard", "difficultyLevel": 8, "noteCount": 500,
+      "audioResource": "", "chartResource": "", "isExample": true, "requiredClearChartId": "first_beat_normal"
+    },
+    {
+      "id": "training_01", "songId": "training", "songTitle": "First Beat",
+      "difficulty": "Practice", "difficultyLevel": 1, "noteCount": 46,
+      "audioResource": "RhythmGame/Audio/TrainingBeat", "chartResource": "RhythmGame/Charts/training_01",
+      "isExample": false, "requiredClearChartId": ""
+    },
+    {
+      "id": "training_01_single", "songId": "training", "songTitle": "First Beat",
+      "difficulty": "Practice", "difficultyLevel": 1, "noteCount": 30,
+      "audioResource": "RhythmGame/Audio/TrainingBeat", "chartResource": "RhythmGame/Charts/training_01_single",
+      "isExample": false, "requiredClearChartId": ""
+    },
+    {
+      "id": "training_01_pads",
+      "songId": "training",
+      "songTitle": "First Beat",
+      "difficulty": "Practice",
+      "difficultyLevel": 1,
+      "noteCount": 30,
+      "audioResource": "RhythmGame/Audio/TrainingBeat",
+      "chartResource": "RhythmGame/Charts/training_01_pads",
+      "isExample": false,
+      "requiredClearChartId": ""
+    },
+    {
+      "id": "training_casual_01",
+      "songId": "training",
+      "songTitle": "First Beat",
+      "difficulty": "Practice",
+      "difficultyLevel": 1,
+      "noteCount": 41,
+      "audioResource": "RhythmGame/Audio/CasualBeat",
+      "chartResource": "RhythmGame/Charts/training_casual_01",
+      "isExample": false,
+      "requiredClearChartId": ""
+    }
+  ],
+  "rules": {
+    "maxHealth": 100, "missDamage": 10,
+    "comboDialogueThresholds": [25, 50, 100], "missDialogueCooldownNotes": 5,
+    "comboStep": 10, "comboBonusPerStep": 0.01, "maxComboBonus": 0.10,
+    "clearAccuracy": 0.60, "maxCalibrationMs": 300, "lateGoodWindowMs": 350,
+    "gradeS": 0.95, "gradeA": 0.90, "gradeB": 0.80, "gradeC": 0.70,
+    "judgements": [
+      { "judgement": 0, "windowMs": 40, "scoreWeight": 1, "accuracyWeight": 1, "keepsCombo": true, "colorHtml": "#D68400" },
+      { "judgement": 1, "windowMs": 80, "scoreWeight": 0.7, "accuracyWeight": 0.7, "keepsCombo": true, "colorHtml": "#8B5BDB" },
+      { "judgement": 2, "windowMs": 200, "scoreWeight": 0.4, "accuracyWeight": 0.4, "keepsCombo": false, "colorHtml": "#188CC4" },
+      { "judgement": 3, "windowMs": 0, "scoreWeight": 0, "accuracyWeight": 0, "keepsCombo": false, "colorHtml": "#D64060" }
+    ]
+  },
+  "economy": {
+    "startingCoins": 0,
+    "upgradeBaseCost": 100, "upgradeCostPerLevel": 20,
+    "clearBaseCoins": 100, "coinsPerDifficultyLevel": 25, "minimumClearRewardRatio": 0.5,
+    "firstClearCoins": 200, "firstFullComboCoins": 300
+  }
+}

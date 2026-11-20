@@ -1,0 +1,6 @@
+{
+  "name": "RhythmGame.PlayModeTests",
+  "rootNamespace": "RhythmGame.Tests",
+  "references": ["RhythmGame.Runtime", "Unity.ugui", "Unity.InputSystem"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}

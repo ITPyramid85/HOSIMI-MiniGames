@@ -1,0 +1,5 @@
+{
+  "name": "RhythmGame.Runtime",
+  "rootNamespace": "RhythmGame",
+  "references": ["Unity.ugui", "Unity.InputSystem"]
+}

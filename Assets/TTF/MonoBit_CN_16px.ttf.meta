@@ -1,0 +1,27 @@
+fileFormatVersion: 2
+guid: 46e118165d9adde44b5c31da2df36e5d
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - MonoBit CN
+  - Microsoft YaHei
+  - Malgun Gothic
+  - PingFang SC
+  - Apple SD Gothic Neo
+  - Noto Sans CJK SC
+  - Noto Sans CJK KR
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

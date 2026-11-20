@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: 12803999a886f074fb67235d76eff40f
+  - enabled: 1
+    path: Assets/Scenes/SampleScene.unity
+    guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/Scenes/Game.unity
+    guid: c5ef60226c438444995c7fbb19a06a82
+  - enabled: 1
+    path: Assets/Scenes/WhackAMole.unity
+    guid: 5114a18537d54ea45b1b5d845ecb105c
+  - enabled: 1
+    path: Assets/Scenes/Mochi.unity
+    guid: 1f0aa1798741fa74da4c6213c1c3e480
+  - enabled: 1
+    path: Assets/Scenes/MiniGames.unity
+    guid: a9dfbb4ac638a3347912fde82c305f13
+  - enabled: 1
+    path: Assets/Scenes/DrivingNail.unity
+    guid: 43afb48bc9aa8f44292e1c0c48107d52
+  - enabled: 1
+    path: Assets/Scenes/ChoppingWood.unity
+    guid: 9a3d015b4db83274b9ed85385f50df63
+  - enabled: 1
+    path: Assets/Scenes/Smithy.unity
+    guid: 3738f16cf78c5bc418f7af6be29da458
+  - enabled: 1
+    path: Assets/Scenes/IceFishing.unity
+    guid: b7c30a1e625226244b36461ef48148a7
+  - enabled: 1
+    path: Assets/Scenes/FabricBeating.unity
+    guid: ee49005a8e676734397662ed2c09c00a
+  - enabled: 1
+    path: Assets/Scenes/TappingBeat.unity
+    guid: e324a8cd9936cde40936131fecca73a6
+  - enabled: 1
+    path: Assets/Scenes/RabbitTurtle.unity
+    guid: 9b8aa9418c080d843a4642f21452d3b4
+  - enabled: 1
+    path: Assets/Scenes/BreakingBricks.unity
+    guid: 2f1cee57bab7ba2438528a8049808afe
+  m_configObjects:
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
+  m_UseUCBPForAssetBundles: 0

@@ -1,0 +1,344 @@
+key,zh-Hans,en,ko,ja
+character.back,返回,Back,돌아가기,戻る
+character.buy_merch,购买周边,Buy merch,굿즈 구매,グッズ購入
+character.changes_applied_but_not_saved_please_ret,变更已生效，但尚未保存。请重试保存。,Changes applied but not saved. Please retry saving.,변경 사항이 적용되었지만 저장되지 않았습니다. 다시 저장하세요.,変更は反映されましたが、保存されていません。もう一度保存してください。
+character.character,角色 ,CHARACTER ,캐릭터 ,キャラクター 
+character.claim_figure,领取实物,Claim figure,실물 받기,フィギュアを受け取る
+character.collected,已收集 ,Collected ,수집 ,コレクション 
+character.crane.combo,嗒！整整齐齐！,Tak! Neat and crisp!,탁! 반듯반듯!,タッ！きっちりそろった！
+character.crane.miss,折一下，重新展开就好。,"Fold, then open up again.",한 번 접고 다시 펼치면 돼.,折って、また広げればだいじょうぶ。
+character.crane.name,纸鹤,Paper Crane,종이학,折りヅル
+character.crane.story,纸的世界里，大家都是折出来的。纸鹤每敲一下边击，就会对折再展开。一不小心，它被风吹进了一封寄往这边的信里。它最怕下雨，所以总躲在鼓后面打拍子。,"In the Paper World everyone is folded into being. Each rim click makes the crane fold in half and open again. One gust blew it into a letter addressed to our world. It is terrified of rain, so it keeps time hiding behind its drum.",종이 세계에서는 모두가 접혀서 태어난다. 종이학은 림샷을 칠 때마다 반으로 접혔다가 펼쳐진다. 그러다 바람에 날려 이쪽으로 가는 편지 속에 들어가 버렸다. 비를 제일 무서워해서 늘 북 뒤에 숨어 박자를 맞춘다.,紙の世界では、みんな折られて生まれる。折りヅルはリムショットを打つたびに半分に折れて、また広がる。ある日、風にふかれて、こちらの世界あての手紙の中へ。雨が大のにがてで、いつもドラムのうしろにかくれてリズムをきざんでいる。
+character.crane.tags,异世界|怕水|折痕 1000 道,Otherworlder|Afraid of rain|1000 folds,이세계|물이 무서워|접은 자국 1000개,異世界|雨がにがて|折り目1000本
+character.crane.world,纸的世界,Paper World,종이 세계,紙の世界
+character.delivery_is_currently_available_in_korea,目前仅支持韩国配送,Delivery is currently available in Korea only,현재 한국 배송만 지원합니다,現在は韓国への配送のみ対応しています
+character.drumsticks,持有鼓棒 ,DRUMSTICKS ,보유 드럼스틱 ,所持スティック 
+character.drumsticks_2,鼓棒 ,Drumsticks ,드럼스틱 ,スティック 
+character.equip,装备,Equip,장착,装備する
+character.figure, / 实物 , / figure , / 실물 , / フィギュア 
+character.figure_claims_delivery_address_are_comin,实物申请（收货地址填写）即将开放。,Figure claims (delivery address) are coming soon.,실물 신청(배송지 입력)은 곧 열려요.,フィギュアの申し込み（配送先の入力）はまもなく開始します。
+character.finish_the_current_game_before_changing,请先结束当前游戏，再调整角色。,Finish the current game before changing characters.,게임을 종료한 후 캐릭터를 변경하세요.,今のゲームを終えてから、キャラクターを変更してください。
+character.fox.combo,嚓！月亮在闪！,Tsk! The moon is shining!,착! 달이 반짝여!,チャッ！月が光ってる！
+character.fox.miss,嘘，听清下一拍。,Shh. Listen for the next beat.,"쉿, 다음 박자를 들어 봐.",しーっ、次の拍をよく聞いて。
+character.fox.name,月夜狐,Moonlight Fox,달밤여우,月夜ギツネ
+character.fox.story,住在没有光的影子世界，尾巴尖挂着一枚小月亮。踩镲「嚓」地一响，月亮就闪一下，照亮回家的路。有一天它闪得太亮，把影子都照没了，只好来到这个世界寻找新的影子。,"It lives in a lightless Shadow World with a tiny moon on the tip of its tail. Every 'tsk' of the hi-hat makes the moon blink and lights the way home. One day it shone so bright the shadows vanished, so it came here to find new ones.","빛이 없는 그림자 세계에 산다. 꼬리 끝에는 작은 달이 달려 있다. 하이햇이 '착' 울리면 달이 반짝이며 집으로 가는 길을 비춘다. 어느 날 너무 밝게 빛나 그림자가 모두 사라져서, 새 그림자를 찾으러 이 세계에 왔다.",光のない影の世界に住み、しっぽの先に小さな月をさげている。ハイハットが「チャッ」と鳴るたびに月がまたたき、帰り道を照らす。ある日、光りすぎて影がぜんぶ消えてしまい、新しい影をさがしにこの世界へやってきた。
+character.fox.tags,异世界|夜行性|月亮会闪,Otherworlder|Nocturnal|Moon blinks,이세계|야행성|달이 반짝,異世界|夜行性|月がまたたく
+character.fox.world,影子世界,Shadow World,그림자 세계,影の世界
+character.get_character,获得角色,Get character,캐릭터 획득,キャラクターを入手
+character.get_the_character_first,，请先获得角色,", get the character first",", 먼저 캐릭터를 획득하세요",、先にキャラクターを入手
+character.guide,引导角色,Guide,안내 캐릭터,ガイド
+character.guide_character_updated,引导角色已更新。,Guide character updated.,안내 캐릭터가 변경되었습니다.,ガイドキャラクターを変更しました。
+character.in_use,使用中,In use,사용 중,使用中
+character.lion.combo,嘭嘭嘭！停不下来！,Boom boom boom! Can't stop!,쿵쿵쿵! 멈출 수 없어!,ボンボンボン！止まらない！
+character.lion.miss,没关系，软软地弹回来！,"It's okay, bounce right back!","괜찮아, 말랑하게 다시!",だいじょうぶ、ぷにっとはね返そう！
+character.lion.name,软软狮,Squishy Lion,말랑사자,ぷにぷにライオン
+character.lion.story,果冻世界的狮子，鬃毛软得像布丁。大家都以为它会吼，其实它一张嘴只会发出「嘭」的一声鼓响。为了练出真正的吼声，它跳进鼓声里，一路弹到了这边。现在觉得「嘭」也挺好的。,"A lion from the Jelly World with a mane as soft as pudding. Everyone expects a roar, but all that comes out is a drum's 'boom'. It bounced through the drumbeat looking for a real roar and landed here. Lately it thinks 'boom' is pretty good too.",젤리 세계의 사자. 갈기는 푸딩처럼 말랑하다. 다들 으르렁댈 줄 알지만 입을 열면 '쿵' 하는 북소리만 난다. 진짜 포효를 연습하려고 북소리 속으로 뛰어들었다가 여기까지 튕겨 왔다. 요즘은 '쿵'도 꽤 좋다고 생각한다.,ゼリーの世界のライオン。たてがみはプリンみたいにやわらかい。みんなほえると思っているけど、口を開けるとドラムの「ボン」しか出ない。本物のほえ声を練習しようとドラムの音にとびこみ、ここまではねてきた。最近は「ボン」も悪くないと思っている。
+character.lion.tags,异世界|一点也不凶|弹力 100%,Otherworlder|Not scary at all|Bounce 100%,이세계|하나도 안 무서워|탄력 100%,異世界|ぜんぜんこわくない|弾力100%
+character.lion.world,果冻世界,Jelly World,젤리 세계,ゼリーの世界
+character.new_character_you_can_equip_it_as_your_g,获得了新角色！可以装备为引导角色。,New character! You can equip it as your guide.,새 캐릭터 획득! 안내 캐릭터로 장착할 수 있어요.,新しいキャラクター！ガイドに装備できます。
+character.not_enough,，鼓棒不足,", not enough",", 드럼스틱 부족",、スティック不足
+character.not_enough_drumsticks_to_claim_the_figur,鼓棒不足，无法领取实物。,Not enough drumsticks to claim the figure.,드럼스틱가 부족해 실물을 받을 수 없어요.,スティックが足りないため、フィギュアを受け取れません。
+character.not_owned,未持有,Not owned,미보유,未所持
+character.official_store_cash,官方商城，现金,"Official store, cash","공식 스토어, 현금",公式ストア・現金
+character.owned,已持有,Owned,보유 중,所持済み
+character.price_prefix,鼓棒 ,Sticks ,드럼스틱 ,スティック 
+character.requirements_not_met_nothing_changed,条件不足，未发生变更。,Requirements not met. Nothing changed.,조건이 부족하여 변경되지 않았습니다.,条件を満たしていないため、変更されませんでした。
+character.retry_save,重试保存,Retry save,저장 재시도,再保存
+character.saved,已保存。,Saved.,저장되었습니다.,保存しました。
+character.set_as_your_guide,设为引导角色,Set as your guide,안내 캐릭터로 설정,ガイドに設定
+character.squirrel.combo,锵！转起来啦！,Crash! Here we spin!,챙! 돌아간다!,ジャーン！回るよ！
+character.squirrel.miss,呼——先停一下，再转起来。,"Whew. Pause, then spin again.",후— 잠깐 멈췄다가 다시 돌자.,ふう、ひと休みしてまた回ろう。
+character.squirrel.name,风松鼠,Wind Squirrel,바람다람쥐,風リス
+character.squirrel.story,旋转世界里，所有东西都在转。风松鼠的尾巴比身体还大，「锵」地敲一下吊镲，尾巴就转一圈，刮起一阵风。它转得太起劲，把自己卷进了龙卷风，落到了这个安静的世界。现在正努力学习「停下来」。,"In the Spinning World everything turns. The squirrel's tail is bigger than its body, and every crash of the cymbal spins it round in a gust. It spun so hard it caught itself in a tornado and landed in this quiet world. Now it is learning how to stop.",회전 세계에서는 모든 것이 돈다. 꼬리가 몸보다 큰 바람다람쥐는 심벌을 '챙' 칠 때마다 꼬리를 한 바퀴 돌려 바람을 일으킨다. 너무 신나게 돌다가 회오리에 휘말려 이 조용한 세계에 떨어졌다. 지금은 '멈추기'를 연습하는 중.,回転の世界では、なにもかもが回っている。体より大きなしっぽを持つ風リスは、シンバルを「ジャーン」と打つたびにしっぽを一回転させて風を起こす。はりきって回りすぎて竜巻にまきこまれ、この静かな世界に落ちてきた。今は「止まる」練習中。
+character.squirrel.tags,异世界|停不下来|转速 MAX,Otherworlder|Can't stop|Spin MAX,이세계|멈출 수 없어|회전 MAX,異世界|止まらない|回転MAX
+character.squirrel.world,旋转世界,Spinning World,회전 세계,回転の世界
+character.the_official_store_page_is_not_set_up_ye,官方商城页面尚未配置。,The official store page is not set up yet.,공식 스토어 페이지가 아직 준비되지 않았어요.,公式ストアのページはまだ準備中です。
+character.turtle.combo,哒！点数刚好！,Tak! Perfect roll!,탁! 딱 맞는 눈!,タッ！ぴったりの目！
+character.turtle.miss,慢一点也没关系，下一拍再来。,Slow is fine. Roll again next beat.,"느려도 괜찮아, 다음 박자에 다시.",ゆっくりでいいよ。次の拍でもう一回。
+character.turtle.name,骰子龟,Dice Turtle,주사위거북,サイコロガメ
+character.turtle.story,来自一切都是正方体的世界，龟壳是一颗骰子，每敲一下鼓，点数就会变。某天掷出了从没见过的「7」，回过神来已经在这个世界了。它相信再掷出一次 7 就能回家。,"From a world where everything is a cube. Its shell is a die, and every drum hit changes the number. One day it rolled a 7 nobody had ever seen, and suddenly it was here. It believes one more 7 will take it home.","모든 것이 정육면체인 세계에서 왔다. 등껍질은 주사위라서 북을 칠 때마다 눈이 바뀐다. 어느 날 본 적 없는 '7'이 나왔고, 정신을 차려 보니 이 세계였다. 7이 한 번 더 나오면 돌아갈 수 있다고 믿는다.",すべてが立方体の世界から来た。こうらはサイコロで、ドラムを打つたびに目が変わる。ある日、だれも見たことのない「7」が出て、気がつくとこの世界にいた。もう一度7を出せば帰れると信じている。
+character.turtle.tags,异世界|今天的点数 6|慢慢来,Otherworlder|Today's roll: 6|No rush,이세계|오늘의 눈 6|천천히,異世界|今日の目は6|のんびり
+character.turtle.world,正方体世界,Cube World,정육면체 세계,立方体の世界
+character.whale.combo,咚！飘起来啦！,Boom! We're floating!,둥! 날아오른다!,ドン！浮かんでる！
+character.whale.miss,别急，跟着鼓点飘起来。,Easy. Float along with the beat.,"천천히, 박자에 몸을 맡겨.",あわてないで、ビートにのってふわっと。
+character.whale.name,天空鲸,Sky Whale,하늘고래,空クジラ
+character.whale.story,在无重力世界把云当鼓敲的小鲸鱼。因为敲得太用力，把次元敲出了一个洞，从那个洞掉到了这个世界。现在正在寻找回去的节拍。,A little whale who drummed on clouds in a world without gravity. It hit so hard it knocked a hole in the dimension and fell through into ours. Now it is searching for the beat that leads home.,"무중력 세계에서 구름을 북처럼 두드리던 아기 고래. 너무 세게 두드리는 바람에 차원에 구멍이 났고, 그 구멍으로 이 세계에 떨어졌다. 지금은 돌아갈 박자를 찾는 중.",無重力の世界で雲をドラムにしてたたいていた小さなクジラ。強くたたきすぎて次元に穴をあけ、その穴からこの世界に落ちてきた。今は帰るためのビートをさがしている。
+character.whale.tags,异世界|次元移动中|节拍感 0,Otherworlder|Between dimensions|Rhythm 0,이세계|차원 이동 중|박자감 0,異世界|次元移動中|リズム感0
+character.whale.world,无重力世界,Zero-G World,무중력 세계,無重力の世界
+character.working_name,（暂定名）, (working name), (가칭),（仮）
+character.world,世界 ,WORLD ,세계 ,ワールド 
+character.world_separator,，, · ,", ",・
+game.a_little_challenge_8_pads,小挑战 · 8 个按钮,A LITTLE CHALLENGE · 8 PADS,작은 도전 · 8개,ちょっとチャレンジ・8パッド
+game.accuracy,准确率  ,Accuracy  ,정확도  ,精度  
+game.audio_output_changed,音频设备已切换,AUDIO OUTPUT CHANGED,오디오 기기 변경,音声出力が変わりました
+game.drumsticks,鼓棒  +,Drumsticks  +,드럼스틱  +,スティック  +
+game.find_the_rhythm_6_pads,熟悉节奏 · 6 个按钮,FIND THE RHYTHM · 6 PADS,리듬에 맞춰 · 6개,リズムをつかもう・6パッド
+game.follow_my_lead,跟我试一下,FOLLOW MY LEAD,함께 해 봐요,いっしょにたたこう
+game.main_menu,返回主界面,Main menu,메인 메뉴,メインメニュー
+game.miss_limit_reached_remaining,失误次数已用完；未完成：,Miss limit reached. Remaining: ,미스 한도 도달. 남은 수: ,ミスの上限に達しました。残り：
+game.pause,暂停,Pause,일시 정지,一時停止
+game.paused,已暂停,PAUSED,일시 정지,一時停止中
+game.paused_and_updated_timing_resume_when_re,已自动暂停并更新延迟补偿，准备好后继续。,Paused and updated timing. Resume when ready.,일시 정지하고 지연 보정을 적용했어요. 준비되면 계속하세요.,一時停止して、タイミングを更新しました。準備ができたら再開してください。
+game.practice,练习,PRACTICE,연습,練習
+game.reach_60_accuracy_to_clear,准确率不足 60%，继续加油。,Reach 60% accuracy to clear.,클리어하려면 정확도 60%가 필요합니다.,精度60%以上でクリア。
+game.result_saved,成绩已保存,Result saved,결과 저장 완료,結果を保存しました
+game.resume,继续演奏,RESUME,계속,再開
+game.resume_and_tap_when_the_button_lights_up,继续后，跟随按钮亮灯点击。,Resume and tap when the button lights up.,재개 후 버튼에 불이 켜지면 탭하세요.,再開して、ボタンが光ったらタップ。
+game.retry,再来一次,RETRY,다시 하기,リトライ
+game.save_failed_return_to_the_menu_to_retry,保存失败，返回主界面后重试保存。,Save failed. Return to the menu to retry saving.,저장 실패. 메뉴로 돌아가 다시 저장하세요.,保存に失敗しました。メニューに戻って再保存してください。
+game.start,开始,START,시작,スタート
+game.start_slow_3_pads,慢慢来 · 下排 3 个,START SLOW · 3 PADS,천천히 · 아래쪽 3개,ゆっくりスタート・3パッド
+game.start_with_the_bottom_three_pads,先跟着下排三个按钮练习,Start with the bottom three pads,아래쪽 패드 3개부터 시작해요,下の3つのパッドから始めよう
+game.tap,点击,TAP,탭,タップ
+game.tap_the_light_with_me,跟我一起，亮了就点！,Tap the light with me!,나와 함께 불이 켜지면 탭!,いっしょに、光ったらタップ！
+game.tap_when_lit_start_slow,亮了点一下 · 从慢到快,TAP WHEN LIT · START SLOW,불이 켜지면 한 번 탭 · 천천히 시작,光ったらタップ・ゆっくりスタート
+game.try_again,挑战结束,TRY AGAIN,도전 종료,もう一回
+game.unable_to_play,无法开始游戏,UNABLE TO PLAY,시작할 수 없습니다,プレイできません
+games.back,返回,Back,돌아가기,戻る
+games.best,最高 ,Best ,최고 ,ベスト 
+games.longest,最长：,Longest: ,최장 시간: ,最長：
+games.echo,鼓点对答,Drum Echo,북소리 따라 하기,まねっこドラム
+echo.title,鼓点对答,Drum Echo,북소리 따라 하기,まねっこドラム
+echo.prompt_what,对面的鼓手先打完一段。记住它，等他打完再照原样打回去。,The drummer across plays a whole phrase. Remember it and answer after he stops.,맞은편 드러머가 한 구절을 다 칩니다. 기억했다가 끝나면 그대로 되받아 치세요.,向かいの太鼓打ちが一節を打ちきる。覚えて、終わってからそのまま返す。
+echo.prompt_when,一段 S D Z C 两拍起七轮；二段加 A 四拍起五轮；三段加 Q E 五拍起五轮。,Stage 1 is seven rounds from two beats on S D Z C. Stage 2 adds A from four beats. Stage 3 adds Q and E from five beats.,1단계는 S D Z C로 2박자부터 7회. 2단계는 A를 더해 4박자부터 5회. 3단계는 Q E를 더해 5박자부터 5회.,一段は S D Z C で二拍から七回。二段は A を加え四拍から五回。三段は Q E を加え五拍から五回。
+echo.prompt_twist,打错或太慢就少半颗心。十次就结束。,A wrong pad or a late beat costs half a heart. Ten misses end the run.,틀리거나 너무 늦으면 하트가 반 개 줄어듭니다. 열 번이면 끝납니다.,間違いや遅れでハートが半分減る。十回で終了。
+echo.huh,嗯？,Huh?,응?,えっ？
+echo.lose,节奏断了，再来！,The phrase fell apart. Again!,장단이 끊겼어요. 다시!,リズムが途切れた。もう一回！
+echo.done,三段全通！对方说不出话。,All three stages echoed. They have nothing to say.,3단계를 다 깼습니다! 상대가 말을 못 합니다.,三段すべて返した。相手は言葉もない。
+echo.stage2,加上 A 键,A opens up,A건이 열립니다,A が増える
+echo.stage3,加上 Q 和 E 键,Q and E open up,Q E건이 열립니다,Q と E が増える
+echo.watch,听着记住,Listen and remember,들으면서 기억하세요,聞いて覚える
+echo.answer,照原样打回去,Answer it back,그대로 되받아 치세요,そのまま返す
+echo.round_unit,轮,R,회,回
+echo.chances,机会 ,Left ,기회 ,残り 
+echo.record,最长拍数 ,Longest phrase ,최장 박자 ,最長拍 
+echo.best,最长 ,Best ,최고 ,最長 
+echo.beat_unit,拍,beats,박자,拍 
+games.ice,凿冰捕鱼,Ice Fishing,얼음 낚시,氷の穴釣り
+ice.title,凿冰捕鱼,Ice Fishing,얼음 낚시,氷の穴釣り
+ice.caught,抓到的鱼：,Caught: ,잡은 물고기: ,釣れた魚：
+ice.dex,鱼图鉴 ,Fish guide ,물고기 도감 ,魚図鑑 
+ice.fall,掉进水里了！,You fell in!,물에 빠졌어요!,水に落ちた！
+ice.prompt_what,鱼会停在左、中、右其中一个冰窟窿。左边敲4号鼓垫。中间敲5号。右边敲8号。,The fish stops at the left hole or the middle or the right. Pad 4 is the left. Pad 5 is the middle. Pad 8 is the right.,물고기가 왼쪽이나 가운데나 오른쪽에 멈춥니다. 왼쪽은 4번 패드이고 가운데는 5번이며 오른쪽은 8번입니다.,魚は左・真ん中・右のどれかに止まります。左は4番。真ん中は5番。右は8番。
+ice.prompt_when,大鱼要连敲两下。它假装停下又逃走时，不要敲。,A big fish needs two strikes in a row. When it only pretends to stop do not strike.,큰 물고기는 연속으로 두 번 두드리세요. 멈추는 척하고 도망가면 치지 마세요.,大きな魚は二回連続で叩く。止まりかけても逃げるときは叩かない。
+ice.prompt_twist,鱼越来越快。敲错位置就会掉进水里。抓到的鱼堆进桶里，并记入图鉴。,The fish get faster. Strike the wrong hole and you fall in. Catches fill the bucket and the guide.,물고기는 점점 빨라집니다. 다른 곳을 치면 물에 빠집니다. 잡은 물고기는 양동이에 쌓이고 도감에 남습니다.,魚はだんだん速くなる。違う場所を叩くと水に落ちる。釣れた魚は桶に積まれ、図鑑に残る。
+ice.fish.perch,河鲈,Perch,농어,パーチ
+ice.fish.trout,鳟鱼,Trout,송어,マス
+ice.fish.carp,鲤鱼,Carp,잉어,コイ
+ice.fish.pike,狗鱼,Pike,강꼬치,カワカマス
+ice.fish.salmon,鲑鱼,Salmon,연어,サケ
+ice.fish.char,红点鲑,Char,곤들매기,イワナ
+games.laundry,捣衣,Laundry Beat,다듬이질,きぬた打ち
+laundry.fly,飞了！,Away!,날아갔다!,飛んだ！
+laundry.left,左手,Left,왼손,左手
+laundry.lose,布没捶好，再来！,The cloth is still rumpled. Again!,옷감이 그대로예요. 다시!,布がしわのまま。もう一回！
+laundry.prompt_twist,同一边连打两次棒槌会飞出去，母亲会盯着你。全程完美时布料会闪着摊平。,Hit the same side twice and the club flies while Mother stares. An all-perfect run spreads the cloth with a shine.,같은 쪽을 두 번 치면 방망이가 날아가고 어머니가 쳐다봅니다. 올 퍼펙트면 옷감이 반짝이며 펴집니다.,同じ側を二回打つと棒が飛び、お母さんが睨む。全パーフェクトで布が光って広がる。
+laundry.prompt_what,左右交替用两根棒槌捶布。4号是左手，5号是右手。,Beat the cloth with two clubs. Pad 4 is the left hand and pad 5 is the right hand.,두 방망이로 좌우를 번갈아 두드리세요. 4번은 왼손이고 5번은 오른손입니다.,左右の棒で交互に打て。4番が左手で5番が右手。
+laundry.prompt_when,棒槌抬起就是拍子。越来越快。,The lifted club is the beat. It keeps getting faster.,방망이가 들리면 박자입니다. 점점 빨라집니다.,棒が上がるのが拍。だんだん速くなる。
+laundry.right,右手,Right,오른손,右手
+laundry.spread,展开了！,Spread flat!,활짝 펴졌다!,広がった！
+laundry.title,捣衣,Fabric Beating,다듬이질,きぬた打ち
+games.locked,准备中,Coming soon,준비 중,準備中
+games.mochi,打年糕,Rice Cake,떡메치기,もちつき
+games.nails,钉钉子,Nail It,못 박기,くぎうち
+games.not_played,还没玩过,Not played yet,아직 안 해 봤어요,まだ遊んでいません
+games.race,龟兔赛跑,Tortoise Race,토끼와 거북이,うさぎとかめ
+race.title,龟兔赛跑,Tortoise Race,토끼와 거북이,うさぎとかめ
+race.prompt_what,乌龟踩着鼓点走。完美走两步，打偏就停下。,The turtle steps on the beat. Perfect takes two steps. A miss stops it.,박자에 맞추면 거북이가 한 걸음 갑니다. 퍼펙트면 두 걸음이고 빗나가면 멈춥니다.,拍に合わせてカメが一歩進む。パーフェクトは二歩。外すと止まる。
+race.prompt_when,S 和 D 交替踩拍。终点前 3 秒改成 Z 连打并且速度变成两倍。,Alternate S and D on the beat. The last 3 seconds switch to Z at double speed.,S와 D를 박자에 맞춰 번갈아 칩니다. 결승 전 3초는 Z 연타로 바뀌고 속도가 두 배가 됩니다.,S と D を交互に踏む。ゴール前3秒は Z の連打になり速さは二倍。
+race.prompt_twist,兔子会先跑再打盹。那时超车。差一点输掉时它会取笑你。,The rabbit runs ahead and then naps. Pass it then. A narrow loss makes it tease you.,토끼가 앞서가다가 졸면 그때 추월하세요. 아슬아슬하게 지면 토끼가 놀립니다.,ウサギは先に走ってから居眠りする。そのあいだに抜く。わずかな負けではからかわれる。
+race.win,乌龟赢了！,The turtle wins!,거북이가 이겼어요!,カメの勝ち！
+race.lose,兔子先到了。,The rabbit got there first.,토끼가 먼저 도착했어요.,ウサギが先に着いた。
+race.close,差一点！兔子吐了吐舌头。,So close! The rabbit sticks out its tongue.,아슬아슬! 토끼가 메롱 합니다.,あと少し！ウサギがべーっ。
+race.wake,啊！,Oh!,어!,あっ！
+race.tease,略略,Nyah nyah,메롱메롱,べーっ
+race.sprint,两倍速,Double speed,속도 2배,二倍速
+race.steps,步数 ,Steps ,걸음 ,歩数 
+race.unlocked,新龟壳和下一个赛道：,New shell and the next course: ,새 등껍질과 다음 코스: ,新しい甲羅と次のコース：
+race.course0,草地,Meadow,풀밭,草原
+race.course1,山路,Mountain,산,山
+race.course2,海边,Sea,바다,海
+race.course3,宇宙,Space,우주,宇宙
+games.smith,铁匠铺,Blacksmith,대장간,かじ屋
+games.title,鼓点小游戏,Drum Mini-Games,드럼 미니게임,ドラムミニゲーム
+games.wall,破墙前进,Wall Breaker,벽 뚫기,かべやぶり
+wall.title,破墙前进,Wall Breaker,벽 뚫기,かべやぶり
+wall.prompt_what,水从身后涨上来。每拍敲碎砖墙再前进。一定要比水快。,Water rises behind you. Break the brick wall on every beat and stay ahead of it.,뒤에서 물이 차오릅니다. 매 박자 벽돌을 깨고 물보다 빠르게 전진하세요.,後ろから水が迫る。拍ごとにレンガを砕いて水より速く進む。
+wall.prompt_when,薄墙按 S。普通墙按 D。厚墙用 C 连打两下或三下。宝箱按 Q。,Thin walls use S. Medium walls use D. Thick walls take two or three C beats. A chest uses Q.,얇은 벽은 S. 보통 벽은 D. 두꺼운 벽은 C를 두세 박 연타. 보물상자는 Q.,薄い壁は S。普通の壁は D。厚い壁は C を二〜三拍。宝箱は Q。
+wall.prompt_twist,打偏砖就不会碎并且水会贴上来。沉下去就会变成鱼。,A miss leaves the brick whole and the water closes in. Go under and you become a fish.,빗나가면 벽돌이 안 깨지고 물이 바짝 따라옵니다. 잠기면 물고기가 됩니다.,外すとレンガは割れず水が迫る。沈むと魚になる。
+wall.lose,被水淹没了。,The water closed over you.,물에 잠겼어요.,水に沈んだ。
+wall.meter,m,m,m,m
+wall.locked,时间 ,Time ,시간 ,時間 
+games.whack,打地鼠,Whack-a-Mole,두더지 잡기,モグラたたき
+games.wood,劈柴,Chop Wood,장작 패기,まき割り
+guide.light_on_tap,亮了，点一下！,Light on? Tap!,불이 켜지면 한 번 탭!,光ったら、タップ！
+language.en,English,English,English,English
+language.ja,日本語,日本語,日本語,日本語
+language.ko,한국어,한국어,한국어,한국어
+language.zh,简体中文,简体中文,简体中文,简体中文
+menu.balance,鼓棒 ,Drumsticks ,드럼스틱 ,スティック 
+menu.characters,角色,Characters,캐릭터,キャラクター
+menu.characters_shop,角色（含商店）,Characters & Shop,캐릭터 (상점 포함),キャラクター（ショップ）
+menu.coming_soon,这个还在准备中，再等等我哦！,That one is still on its way. Soon!,이건 아직 준비 중이야. 조금만 기다려 줘!,それはまだ準備中なんだ。もう少し待っててね！
+menu.companion,伙伴  ,Companion  ,리듬 친구  ,なかま  
+menu.drumsticks,鼓棒  ,DRUMSTICKS  ,드럼스틱  ,スティック  
+menu.find_your_rhythm,准备好，跟上节拍。,Find your rhythm.,리듬에 맞춰 시작하세요.,ビートにのって、はじめよう。
+menu.hello_1,一起敲鼓吧！,Let's play the drums!,같이 드럼 치자!,いっしょにドラムをたたこう！
+menu.hello_2,今天想玩什么？,What shall we play today?,오늘은 뭐 할까?,今日はなにで遊ぶ？
+menu.hello_3,跟着节拍，咚咚咚！,"Follow the beat, boom boom!",박자에 맞춰 둥둥둥!,ビートにあわせてドンドンドン！
+menu.hello_games,小游戏要一直打到最后哦！,Mini-games go on until the very end!,미니게임은 끝까지 계속돼!,ミニゲームは最後まで続くよ！
+menu.inquiry,咨询,Contact,문의,お問い合わせ
+menu.lessons,鼓练习,Drum Lessons,드럼 교육,ドラム練習
+menu.mini_games,鼓点小游戏（10 种）,Drum Mini-Games (10),드럼 미니게임 (10종),ドラムミニゲーム（10種）
+menu.mochi,打年糕,Rice Cake,떡메치기,もちつき
+menu.official_store,官方商城,Official Store,공식몰,公式ストア
+menu.quit_game,退出游戏,Quit Game,게임 종료,ゲーム終了
+menu.records,战绩,Records,전적,戦績
+menu.rhythm_game,节奏游戏,Rhythm Game,리듬 게임,リズムゲーム
+menu.settings,设置,Settings,설정,設定
+menu.shop,商城,Shop,상점,ショップ
+menu.start_game,开始游戏,Start Game,게임 시작,ゲームスタート
+menu.unable_to_load_save_please_restart_the_g,无法读取存档，请重新启动游戏。,Unable to load save. Please restart the game.,저장 데이터를 불러올 수 없습니다. 게임을 다시 시작해 주세요.,セーブデータを読み込めません。ゲームを再起動してください。
+menu.unsaved_changes_retry_saving_in_characte,有未保存的变更，请在角色界面重试保存。,Unsaved changes. Retry saving in Characters.,저장되지 않은 변경 사항이 있습니다. 캐릭터 화면에서 다시 저장하세요.,未保存の変更があります。キャラクター画面で再保存してください。
+menu.whack_a_mole,打地鼠,Whack-a-Mole,두더지 잡기,モグラたたき
+minigame.back,返回,BACK,돌아가기,戻る
+minigame.clear_bonus,通关奖励 +,clear bonus +,클리어 보너스 +,クリアボーナス +
+minigame.cleared,关卡通过！,Level Cleared!,레벨 클리어!,レベルクリア！
+minigame.complete,退出,Exit,종료,終了
+minigame.exit_ask,确定退出吗？,Exit now?,정말 종료할까요?,終了しますか？
+minigame.continue,继续,CONTINUE,계속,続ける
+minigame.drumsticks,鼓棒：+,Drumsticks: +,드럼스틱: +,スティック：+
+minigame.early,早 ,EARLY ,빠름 ,早い 
+minigame.late,晚 ,LATE ,늦음 ,遅い 
+minigame.new_best,新纪录,New Record,신기록,新記録
+minigame.play_again,再来一次,PLAY AGAIN,다시 하기,もう一回
+minigame.stage,阶段 ,Stage ,단계 ,ステージ 
+minigame.start,开始,START,시작,スタート
+minigame.time,时间：,Time: ,시간: ,時間：
+mochi.bean,豆面年糕,Soybean rice cake,콩고물 떡,きなこもち
+mochi.lose,年糕没打成，再来！,The rice cake got away. Again!,떡이 엉망이 됐어요. 다시!,もちつき失敗。もう一回！
+mochi.pile,年糕堆成了山。奶奶跳起舞来。,The cakes pile into a mountain and Grandma dances.,떡이 산처럼 쌓이고 할머니가 춤을 춥니다.,もちが山になっておばあちゃんが踊る。
+mochi.rainbow,彩虹年糕,Rainbow rice cake,무지개 떡,にじもち
+mochi.ouch,哎哟！,Ouch!,아이고!,いたっ！
+mochi.prompt_twist,大约一分钟后结束。,It ends after about a minute.,약 1분이 되면 끝납니다.,およそ一分で終わる。
+mochi.prompt_what,奶奶翻好年糕，就用年糕锤敲 8 号鼓垫。,"When Grandma flips the rice cake, strike pad 8.",할머니가 떡을 뒤집으면 8번 패드를 치세요.,おばあちゃんがもちを返したら、8番パッドをたたこう。
+mochi.prompt_when,奶奶的手收回来的那一拍，就是敲的时机。,Strike on the beat her hand comes out.,할머니 손이 빠지는 박자에 치세요.,手がもどる拍がたたくタイミング。
+mochi.splat,啪叽！,Splat!,철퍽!,ベチャッ！
+mochi.title,打年糕,Rice Cake Pounding,떡메치기,もちつき
+mochi.too_slow,慢了！,Too slow!,늦었어!,おそい！
+nails.bend,弯了！,Bent!,휘었다!,曲がった！
+nails.chair,椅子,Chair,의자,椅子
+nails.desk,桌子,Desk,책상,机
+nails.house,房子,House,집,家
+nails.reward_chair,两根钉好了。椅子完成。,Two nails are in. The chair is done.,못 두 개를 맞혀 의자가 되었습니다.,くぎを二本打って椅子ができた。
+nails.reward_desk,三根钉好了。桌子完成。,Three nails are in. The desk is done.,못 세 개를 맞혀 책상이 되었습니다.,くぎを三本打って机ができた。
+nails.reward_house,五根钉好了。房子完成。,Five nails are in. The house is done.,못 다섯 개를 맞혀 집이 되었습니다.,くぎを五本打って家ができた。
+nails.landed,钉中 ,Hit ,맞힌 개수 ,当たった本数 
+nails.lose,钉子弯了，再来！,The nail bent. Again!,못이 휘었어요. 다시!,くぎが曲がった。もう一回！
+nails.played,时间 ,Time ,플레이 시간 ,時間 
+nails.swung,敲击 ,Strikes ,때린 횟수 ,たたいた回数 
+nails.prompt_twist,"钉好两根是椅子，三根是桌子，五根是房子。打歪一根就弯，下一根还会出来。","Two seated nails make a chair, three a desk, five a house. A bent nail is followed by the next.","두 개를 완성하면 의자, 세 개면 책상, 다섯 개면 집입니다. 휘어도 다음 못이 나옵니다.","二本で椅子、三本で机、五本で家。曲がっても次のくぎが出る。"
+nails.prompt_what,把五根钉子按拍子敲进木板。每根敲一下就钉好了。,"Drive five nails on the beat. One hit seats a nail.",정박에 맞춰 못 다섯 개를 박으세요. 한 못은 한 번입니다.,五本のくぎを拍に合わせて打つ。一本は一回。
+nails.prompt_when,锤子落下的那一拍敲 7 号鼓垫。打歪了，下一根马上出来。,Strike pad 7 as the hammer falls. Miss, and the next nail comes out.,망치가 내려오는 박에 7번 패드를 치세요. 빗나가면 다음 못이 나옵니다.,ハンマーが下りる拍に7番。外すと次のくぎが出る。
+nails.remaining,剩余次数,Remaining,남은 횟수,残り
+nails.thumb,哎呀！,Ow!,아야!,いてっ！
+nails.title,钉钉子,Driving Nails,못 박기,くぎうち
+settings.active_offset,当前生效补偿 ,Active offset ,현재 적용 보정 ,現在の補正 
+settings.at_least,至少需要 ,At least ,최소 ,最低 
+settings.auto_saved,修改会自动保存,Changes are saved automatically,변경 사항은 자동으로 저장됩니다,変更は自動で保存されます
+settings.bgm,背景音乐,Music,배경음악,BGM
+settings.bluetooth_audio_in_use,正在使用蓝牙音频,Bluetooth audio in use,블루투스 오디오 사용 중,Bluetooth オーディオを使用中
+settings.bluetooth_compensation_off,蓝牙补偿：关,Bluetooth compensation: OFF,블루투스 보정: 꺼짐,Bluetooth 補正：オフ
+settings.bluetooth_compensation_on,蓝牙补偿：开,Bluetooth compensation: ON,블루투스 보정: 켜짐,Bluetooth 補正：オン
+settings.bluetooth_headset_connected_estimated_ro,检测到蓝牙耳机（按连接判断）,Bluetooth headset connected (estimated route),블루투스 연결 감지 (출력 경로 추정),Bluetooth イヤホンを検出（接続から推定）
+settings.bluetooth_latency_test,蓝牙耳机延迟校准,Bluetooth latency test,블루투스 지연 측정,Bluetooth 遅延の調整
+settings.cancel,取消,Cancel,취소,キャンセル
+settings.close,关闭,Close,닫기,閉じる
+settings.coming_soon,准备中,Coming soon,준비 중,準備中
+settings.could_not_save_please_retry,保存失败，请重试。,Could not save. Please retry.,저장 실패. 다시 시도하세요.,保存できませんでした。もう一度お試しください。
+settings.done,测试完成,Done,측정 완료,測定完了
+settings.effects_volume,音效,Sound effects,효과음,効果音
+settings.google,谷歌账号,Google account,구글 계정,Google アカウント
+settings.google_sign_in,登录,Sign in,로그인,ログイン
+settings.if_using_the_speaker_turn_this_off_and_s,若实际使用扬声器，请关闭补偿开关并保存。,"If using the speaker, turn this off and save.",스피커 사용 시 보정을 끄고 저장하세요.,スピーカーで遊ぶ場合は、補正をオフにして保存してください。
+settings.inconsistent_taps_try_again,波动较大，建议重测,"Inconsistent taps, try again",편차가 커서 재측정 권장,ばらつきが大きいので、再測定をおすすめします
+settings.inquiry,咨询,Contact,문의,お問い合わせ
+settings.inquiry_open,发送,Send,보내기,送る
+settings.language,语言,Language,언어,言語
+settings.latency,延迟校准,Latency,지연 보정,遅延の調整
+settings.latency_entry,蓝牙耳机延迟校准,Bluetooth latency test,블루투스 지연 측정,Bluetooth 遅延の調整
+settings.latency_hint,戴蓝牙耳机玩之前，先校准一次,Using Bluetooth headphones? Calibrate once first.,블루투스 이어폰을 쓴다면 먼저 한 번 측정하세요.,ワイヤレスイヤホンなら、先に一度調整を。
+settings.latency_open,校准,Calibrate,보정하기,調整する
+settings.light_delayed_by,灯光延后 ,Light delayed by ,불빛 지연 ,ライトの遅れ 
+settings.listen_for_two_beats,先听两拍…,Listen for two beats…,두 박자 들어보세요…,まず2拍聞いて…
+settings.master_volume,总音量,Master,전체 음량,全体の音量
+settings.music_volume,音乐,Music,음악,音楽
+settings.normal_output_bluetooth_offset_inactive,普通输出 · 蓝牙补偿未生效,Normal output · Bluetooth offset inactive,일반 출력 · 블루투스 보정 미적용,通常の出力・Bluetooth 補正は無効
+settings.not_enough_taps,点击次数不足,Not enough taps,탭 횟수 부족,タップ回数が足りません
+settings.not_on_bluetooth_for_reference,当前非蓝牙输出，仅供参考,Not on Bluetooth: for reference,블루투스 아님: 참고용,Bluetooth 出力ではありません（参考値）
+settings.output_unknown_test_detection_on_a_phone,未能检测输出 · 自动检测需在手机上测试,Output unknown · Test detection on a phone,출력 확인 불가 · 휴대폰에서 감지 테스트 필요,出力を判別できません・自動判別はスマホでテスト
+settings.pad,鼓垫连接,Drum pad,패드 연결,パッド接続
+settings.pad_connect,连接,Connect,연결,接続
+settings.press_start_first,先点“开始测试”,Press Start first,먼저 '측정 시작'을 누르세요,先に「測定開始」を押してください
+settings.press_start_when_ready,准备好后点“开始测试”,Press Start when ready,준비되면 '측정 시작',準備ができたら「測定開始」
+settings.put_on_your_headset_press_start_and_tap,"戴上耳机点“开始测试”，每听到一声“哒”就点一下左侧按钮。
+测完点“使用测量值”再保存；绿灯按当前补偿延后闪烁，与声音同步即为准确。","Put on your headset, press Start, and tap the pad on every click.
+Use the result, then save. The light is delayed by the current offset: in sync with the click means it's right.","이어폰을 끼고 '측정 시작' 후 '딱' 소리마다 왼쪽 버튼을 누르세요.
+측정값을 적용한 뒤 저장하세요. 불빛이 소리와 맞으면 보정이 정확합니다.","イヤホンをつけて「測定開始」を押し、「タッ」と聞こえるたびに左のボタンをタップ。
+終わったら「測定値を使う」を押して保存。ライトは現在の補正分おくれて光り、音とそろえば正確です。"
+settings.reset,归零,Reset,초기화,リセット
+settings.result,测量结果,Result,측정 결과,測定結果
+settings.save_close,保存并关闭,Save & close,저장 후 닫기,保存して閉じる
+settings.sound,声音,Sound,소리,サウンド
+settings.sound_effects_are_muted,音效音量为 0，听不到节拍,Sound effects are muted,효과음이 꺼져 있습니다,効果音の音量が0のため、拍が聞こえません
+settings.spread,波动 ±,Spread ±,편차 ±,ばらつき ±
+settings.start_test,开始测试,Start test,측정 시작,測定開始
+settings.stop,结束测试,Stop,측정 종료,測定終了
+settings.suggested_bluetooth_offset,建议蓝牙补偿 ,Suggested Bluetooth offset ,권장 블루투스 보정 ,おすすめの Bluetooth 補正 
+settings.tap,点 击,TAP,탭,タップ
+settings.tap_on_each_click,跟着“哒”声点击  ,Tap on each click  ,'딱' 소리에 맞춰 탭  ,「タッ」に合わせてタップ  
+settings.tap_to_the_sound_not_the_light,建议安静环境，跟着声音而不是灯光点击。,"Tap to the sound, not the light.",불빛이 아닌 소리에 맞춰 탭하세요.,静かな場所で、ライトではなく音に合わせてタップしてください。
+settings.taps, 次, taps,회, 回
+settings.test_again,重新测试,Test again,다시 측정,もう一度測定
+settings.testing,测试中…,Testing…,측정 중…,測定中…
+settings.title,设置,Settings,설정,設定
+settings.use_result,使用测量值,Use result,측정값 적용,測定値を使う
+settings.valid_taps_are_needed_try_again, 次有效点击，请重新测试。, valid taps are needed. Try again.,회의 유효한 탭이 필요합니다., 回の有効なタップが必要です。もう一度測定してください。
+settings.volume,音量,Volume,음량,音量
+smith.crack,裂了！,Cracked!,갈라졌다!,割れた！
+smith.legendary,传说之剑,Legendary Sword,전설의 검,伝説の剣
+smith.lose,铁凉了，再来！,The iron went cold. Again!,쇠가 식었어요. 다시!,鉄が冷めた。もう一回！
+smith.prompt_twist,"发光时间一次比一次短。变凉时敲下去会碎成渣。完全凉了再敲会裂开，铁匠叹气。发亮时敲中就迸出火花，铁进一阶。","The glow gets shorter every time. Strike while it cools and the iron shatters. Strike after it is cold and it cracks while the smith sighs. A glowing blow sparks and advances the iron.","빛나는 시간은 점점 짧아집니다. 식어가는 도중에 치면 산산조각 납니다. 식은 뒤에 치면 금이 가고 대장장이가 한숨을 쉽니다.","光る時間はだんだん短くなる。冷めていく途中で打つと粉々になる。冷めたあとに打つとひびが入り、鍛冶屋がため息をつく。"
+smith.prompt_what,只在铁烧红时敲。平常用 2 号叠镲，最后一下用 1 号碎音镲。,Strike only while the iron glows red. Hammer on pad 2. The last blow is crash 1.,쇠가 붉게 빛날 때만 치세요. 두드릴 때는 2번, 마지막 마무리는 1번입니다.,鉄が赤く輝くときだけ打て。叩くのは2番、最後の一打ちは1番。
+smith.prompt_when,风箱声带着拍子。铁变红就是信号，没有另外的提示音。发光一次比一次短。,The bellows keep time. The iron turning red is the signal, with no extra cue. Each glow is shorter.,박자는 풀무 소리가 잡아 줍니다. 쇠가 붉어지면 신호입니다. 따로 들리는 소리는 없습니다.,拍はふいごの音が取ります。鉄が赤くなるのが合図で、ほかに音はありません。
+smith.remaining,锻造,Heat,단련,鍛錬
+smith.shatter,碎了！,Shattered!,산산조각!,粉々！
+smith.sigh,唉……,Haa…,하아…,はぁ…
+smith.spark,火花！,Sparks!,불꽃!,火花！
+smith.tap,轻敲,Tap,두드림,叩き
+smith.finish,收刃,Finish,마무리,仕上げ
+smith.call_tap,2号 轻敲,Pad 2 tap,2번 두드림,2番 叩き
+smith.call_finish,1号 收刃,Pad 1 finish,1번 마무리,1番 仕上げ
+smith.spark_hint,敲 1 号镲！,Crash 1!,1번 크래시!,1番クラッシュ！
+smith.stage1,粗铁,Rough Bar,거친 쇠,粗鉄
+smith.stage2,刀坯,Blade Blank,칼날,刀身
+smith.stage3,长剑,Sword,장검,長剣
+smith.stage4,华剑,Fine Sword,화려한 검,華やかな剣
+smith.stage5,宝剑,Jeweled Sword,보석 검,宝石の剣
+smith.stage6,黄金剑,Gilded Sword,황금 검,黄金の剣
+smith.title,铁匠铺,Smithy,대장간,かじ屋
+whack.beep,哔——,BEEP!,삐—,ブーッ
+whack.gold_bonus_don_t_hit_the_flowers,金地鼠加分，戴花的别打！,Gold = bonus. Don't hit the flowers!,"황금은 보너스, 꽃 두더지는 치지 마세요!",金のモグラはボーナス、花のモグラはたたかないで！
+whack.moles_rise_half_a_beat_early_strike_at_t,地鼠大约露出一秒。露着的时候敲。,Moles stay up for about a second. Strike while they are up.,두더지가 약 1초 동안 나와 있습니다. 나와 있는 동안 치세요.,モグラは約1秒顔を出します。出ているあいだに叩く。
+whack.nyah,略略略,NYAH,메롱,べーっ
+whack.strike_the_pad_where_a_mole_pops_up,地鼠从哪个洞探头，就敲那个位置的鼓垫。,Strike the pad where a mole pops up.,두더지가 나온 자리의 패드를 치세요.,モグラが顔を出した穴の位置のパッドをたたこう。
+whack.the_moles_win_again,地鼠赢了，再来！,The moles win. Again!,두더지 승리! 다시!,モグラの勝ち。もう一回！
+whack.whack_a_mole,打地鼠,WHACK-A-MOLE,두더지 잡기,モグラたたき
+wood.bonus,西瓜！,Melon!,수박!,スイカ！
+wood.clang,当！,Clang!,팅!,カン！
+wood.lose,斧子崩了，再来！,The axe bounced off. Again!,도끼가 튕겼어요. 다시!,斧がはじかれた。もう一回！
+wood.miss,没劈开！,Missed!,못 쪼갰어!,割れなかった！
+wood.prompt_twist,"西瓜是奖励。石头千万别砍，砍到斧子就崩飞、游戏结束。连砍两次斧头变金，金斧挡一次石头后变回普通斧。","Watermelon is a bonus. Never chop a stone: the axe bounces off and the run ends. Two hits in a row turn the axe gold, and the gold axe survives one stone before it turns plain again.","수박은 보너스입니다. 돌은 치면 안 됩니다. 치면 도끼가 튕겨 날아가며 게임이 끝납니다. 두 번 연속으로 맞히면 도끼가 황금색이 되고, 황금도끼는 돌을 한 번 막은 다음 일반도끼로 돌아갑니다.","スイカはボーナス。石は割らない。割ると斧がはじき飛ばされて終わり。二回続けると斧が金になり、金の斧は石を一度だけ防いで普通の斧に戻る。"
+wood.prompt_what,传送带把柴送过来。粗柴要连砍两拍。,The belt brings the wood along. A thick log takes two beats.,컨베이어 벨트를 따라 장작이 나옵니다. 굵은 장작은 두 박입니다.,ベルトに乗ってまきが来る。太いまきは二拍。
+wood.prompt_when,柴经过斧头的那一拍，砍 8 号鼓垫。,Strike pad 8 on the beat it passes the axe.,도끼 앞을 지나는 박자에 8번 패드를 치세요.,斧の前を通る拍に8番をたたこう。
+wood.title,劈柴,Chopping Wood,장작 패기,まき割り

@@ -1,0 +1,213 @@
+{
+  "chartId": "training_casual_01",
+  "bpm": 120,
+  "duration": 60,
+  "travelSeconds": 2.5,
+  "notes": [
+    {
+      "kind": 0,
+      "time": 2,
+      "pad": 5
+    },
+    {
+      "kind": 0,
+      "time": 4,
+      "pad": 6
+    },
+    {
+      "kind": 0,
+      "time": 6,
+      "pad": 7
+    },
+    {
+      "kind": 0,
+      "time": 8,
+      "pad": 6
+    },
+    {
+      "kind": 0,
+      "time": 10,
+      "pad": 5
+    },
+    {
+      "kind": 0,
+      "time": 12,
+      "pad": 7
+    },
+    {
+      "kind": 0,
+      "time": 14,
+      "pad": 5
+    },
+    {
+      "kind": 0,
+      "time": 16,
+      "pad": 6
+    },
+    {
+      "kind": 0,
+      "time": 18,
+      "pad": 7
+    },
+    {
+      "kind": 0,
+      "time": 20.0,
+      "pad": 5
+    },
+    {
+      "kind": 0,
+      "time": 21.5,
+      "pad": 3
+    },
+    {
+      "kind": 0,
+      "time": 23.0,
+      "pad": 7
+    },
+    {
+      "kind": 0,
+      "time": 24.5,
+      "pad": 2
+    },
+    {
+      "kind": 0,
+      "time": 26.0,
+      "pad": 6
+    },
+    {
+      "kind": 0,
+      "time": 27.5,
+      "pad": 4
+    },
+    {
+      "kind": 0,
+      "time": 29.0,
+      "pad": 5
+    },
+    {
+      "kind": 0,
+      "time": 30.5,
+      "pad": 7
+    },
+    {
+      "kind": 0,
+      "time": 32.0,
+      "pad": 3
+    },
+    {
+      "kind": 0,
+      "time": 33.5,
+      "pad": 6
+    },
+    {
+      "kind": 0,
+      "time": 35.0,
+      "pad": 2
+    },
+    {
+      "kind": 0,
+      "time": 36.5,
+      "pad": 4
+    },
+    {
+      "kind": 0,
+      "time": 38.0,
+      "pad": 7
+    },
+    {
+      "kind": 0,
+      "time": 40,
+      "pad": 6
+    },
+    {
+      "kind": 0,
+      "time": 41,
+      "pad": 0
+    },
+    {
+      "kind": 0,
+      "time": 42,
+      "pad": 5
+    },
+    {
+      "kind": 0,
+      "time": 43,
+      "pad": 3
+    },
+    {
+      "kind": 0,
+      "time": 44,
+      "pad": 7
+    },
+    {
+      "kind": 0,
+      "time": 45,
+      "pad": 1
+    },
+    {
+      "kind": 0,
+      "time": 46,
+      "pad": 4
+    },
+    {
+      "kind": 0,
+      "time": 47,
+      "pad": 6
+    },
+    {
+      "kind": 0,
+      "time": 48,
+      "pad": 2
+    },
+    {
+      "kind": 0,
+      "time": 49,
+      "pad": 7
+    },
+    {
+      "kind": 0,
+      "time": 50,
+      "pad": 0
+    },
+    {
+      "kind": 0,
+      "time": 51,
+      "pad": 5
+    },
+    {
+      "kind": 0,
+      "time": 52,
+      "pad": 1
+    },
+    {
+      "kind": 0,
+      "time": 53,
+      "pad": 3
+    },
+    {
+      "kind": 0,
+      "time": 54,
+      "pad": 6
+    },
+    {
+      "kind": 0,
+      "time": 55,
+      "pad": 4
+    },
+    {
+      "kind": 0,
+      "time": 56,
+      "pad": 7
+    },
+    {
+      "kind": 0,
+      "time": 57,
+      "pad": 2
+    },
+    {
+      "kind": 0,
+      "time": 58,
+      "pad": 5
+    }
+  ]
+}
