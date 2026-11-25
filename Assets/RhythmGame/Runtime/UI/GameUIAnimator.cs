@@ -1,13 +1,12 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace RhythmGame
 {
-    // Game scene presentation: shutter reveal, HUD columns sliding in, the track unfolding, and
-    // punches when HUD texts change. It only reads what GameController writes, never game state.
+    // Game scene presentation: HUD columns sliding in, the track unfolding, and punches when HUD
+    // texts change. It only reads what GameController writes, never game state.
     public sealed class GameUIAnimator : MonoBehaviour
     {
         private const float GridSpeed = 8f, GridTile = 64f;
@@ -21,10 +20,11 @@ namespace RhythmGame
         private float startedAt;
         private bool exiting;
 
+        private void Awake() { HideWipe(); }
+
         private void Start()
         {
             startedAt = Time.unscaledTime;
-            StartCoroutine(PixelTween.Blinds(this, wipeBars, false));
             SlideIn(leftColumn, -640, .1f);
             SlideIn(rightColumn, 640, .16f);
             StartCoroutine(PixelTween.Run(.36f, t => track.localScale =
@@ -45,13 +45,16 @@ namespace RhythmGame
         {
             if (exiting) return;
             exiting = true;
-            StartCoroutine(Exit(done));
+            HideWipe();
+            if (done != null) done();
         }
 
-        private IEnumerator Exit(Action done)
+        // The purple shutter used to open over the prompt and the result. Scene changes fade instead.
+        private void HideWipe()
         {
-            yield return PixelTween.Blinds(this, wipeBars, true);
-            done();
+            if (wipeBars == null) return;
+            foreach (RectTransform bar in wipeBars)
+                if (bar != null) bar.gameObject.SetActive(false);
         }
 
         private void Update()

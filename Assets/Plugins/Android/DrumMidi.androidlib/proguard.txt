@@ -1,0 +1,2 @@
+# Called from C# through JNI (AndroidJavaObject / AndroidJavaProxy); keep names.
+-keep class com.hosimi.drum.** { *; }

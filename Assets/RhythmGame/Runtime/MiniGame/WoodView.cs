@@ -22,7 +22,7 @@ namespace RhythmGame
         private Vector2 pieceHome, axeHome;
         private float beltOffset, rollerSpin, angle, nextStrikeAt = -1f, chopWindow = .17f, approachSpeed = BeltSpeed;
         private bool beltRunning;
-        private bool landOnArrival, splitOnArrival, bonusOnArrival, failOnArrival, bounceOnArrival, passOnArrival, releaseOnArrival;
+        private bool landOnArrival, splitOnArrival, bonusOnArrival, failOnArrival, bounceOnArrival, passOnArrival, releaseOnArrival, restrikeOnArrival;
         private Coroutine travel, swing, reaction, mood;
         private bool rebounding, gold, goldSpent, plainOnArrival, armed;
         private float stoneFrom = -1f, stoneUntil = -1f, reboundUntil = -1f;
@@ -64,6 +64,8 @@ namespace RhythmGame
             for (int i = 0; i < rollers.Length; i++)
                 if (rollers[i] != null) rollers[i].localEulerAngles = new Vector3(0f, 0f, rollerSpin);
         }
+
+        public RectTransform StrikePoint { get { return axe != null ? axe : piece; } }
 
         public void OnPointerDown(PointerEventData e)
         {
@@ -126,13 +128,12 @@ namespace RhythmGame
                 stoneFrom = Time.unscaledTime + travelTime - .12f;
                 stoneUntil = Time.unscaledTime + travelTime + Mathf.Max(0f, hold) + .45f;
             }
-            // The belt is only so fast. A log that would have to sprint the whole width starts
-            // further along, so it still reaches the board on the beat.
+            // Always enters at the left end and is on the board, under the axe, when the beat arrives.
+            // The belt stripes stay at BeltSpeed; the piece itself covers the whole span in the time it has.
             float edge = -BeltHalf() - piece.sizeDelta.x * .5f;
-            float span = Mathf.Max(0f, pieceHome.x - edge);
-            approachSpeed = Mathf.Min(BeltSpeed, span / travelTime);
-            float fromLeft = pieceHome.x - approachSpeed * travelTime;
-            piece.anchoredPosition = new Vector2(fromLeft, pieceHome.y);
+            float span = Mathf.Max(1f, pieceHome.x - edge);
+            approachSpeed = span / travelTime;
+            piece.anchoredPosition = new Vector2(edge, pieceHome.y);
             if (travel != null) StopCoroutine(travel);
             travel = StartCoroutine(Ride(piece, 0f, hold, true));
             Say("");
@@ -158,11 +159,17 @@ namespace RhythmGame
             swing = StartCoroutine(RunSwing(at));
         }
 
-        public void Chop(bool split, bool bonus)
+        // restrike: the press came after the scheduled stroke had already landed, so the blade comes
+        // up and down once more and the piece splits under that blow.
+        public void Chop(bool split, bool bonus, bool restrike = false)
         {
+            // Both blows of a thick log came before the first stroke landed: that stroke splits it,
+            // and the second scheduled stroke would wait for a chop that has already been used.
+            if (split && landOnArrival && swing != null) nextStrikeAt = -1f;
             landOnArrival = true;
             splitOnArrival = split;
             bonusOnArrival = bonus;
+            restrikeOnArrival = restrike;
             if (swing == null) ApplyChop();
         }
 
@@ -174,7 +181,7 @@ namespace RhythmGame
         }
 
         // No stroke is scheduled for a stone, so the player's chop starts one here. The contact is
-        // settled where that blade lands: on the stone it flies off, on bare belt the stone rides on.
+        // settled where that blade lands: on the stone the axe clangs and stays, on bare belt the stone rides on.
         public void CommitStoneChop()
         {
             if (Rebounding) return;
@@ -207,23 +214,10 @@ namespace RhythmGame
             if (Rebounding) return;
             armed = false;
             stoneFrom = stoneUntil = -1f;   // one stone, one contact
-            // The gilding is a one-time shield. Spending it leaves the plain axe for the rest of the
-            // run, so the next stone is fatal even after another clean streak.
-            if (Gold)
-            {
-                goldSpent = true;
-                ApplyPlain();
-                releaseOnArrival = true;
-                return;
-            }
-            rebounding = true;
-            reboundUntil = Time.unscaledTime + .6f;
-            if (travel != null) StopCoroutine(travel);
-            travel = null;
-            Coroutine falling = swing;
-            swing = null;
-            if (falling != null) StopCoroutine(falling);
-            swing = StartCoroutine(FlyThenReport());
+            // A stone costs half a heart in the score. The axe clangs and stays; it does not fly off.
+            if (Gold) goldSpent = true;
+            ApplyPlain();
+            releaseOnArrival = true;
         }
 
         // The stroke has landed. A stone under the blade is a real hit; one still riding in is not,
@@ -294,6 +288,7 @@ namespace RhythmGame
                 yield return SwingToStrike(lift, down);
                 if (SettleStone()) yield break;
                 while (!landOnArrival && !failOnArrival && !bounceOnArrival && !passOnArrival && !plainOnArrival && !releaseOnArrival) yield return null;
+                if (landOnArrival && restrikeOnArrival) yield return SwingToStrike(.07f, .07f);
                 if (!passOnArrival && !bounceOnArrival)
                 {
                     yield return StartCoroutine(SwingBetween(angle, Strike, .06f));
@@ -546,7 +541,7 @@ namespace RhythmGame
 
         private void ClearFlags()
         {
-            landOnArrival = splitOnArrival = bonusOnArrival = failOnArrival = bounceOnArrival = passOnArrival = plainOnArrival = releaseOnArrival = false;
+            landOnArrival = splitOnArrival = bonusOnArrival = failOnArrival = bounceOnArrival = passOnArrival = plainOnArrival = releaseOnArrival = restrikeOnArrival = false;
         }
 
         // The piece sits on the belt's top edge. Its bottom lines up with that edge.

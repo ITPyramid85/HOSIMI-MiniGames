@@ -46,6 +46,8 @@ namespace RhythmGame
             caption.text = Strings.T("smith.remaining");
         }
 
+        public RectTransform Hammer { get { return hammer != null ? hammer : anvil; } }
+
         public void OnPointerDown(PointerEventData e)
         {
             if (e.button == PointerEventData.InputButton.Left && Pressed != null) Pressed();
@@ -75,6 +77,18 @@ namespace RhythmGame
                 foreach (Image pip in pips) pip.color = new Color(1f, 1f, 1f, .28f);
             if (sparks != null)
                 foreach (Image speck in sparks) speck.gameObject.SetActive(false);
+        }
+
+        // A fresh bar on the anvil: the count, the blade and the pips start over for the next sword.
+        public void NewSword()
+        {
+            form = blows = 0;
+            ShowForm(0);
+            bladeImage.enabled = false;
+            blade.localScale = Vector3.one;
+            countText.text = "0 / " + SmithChart.HeatCount;
+            if (pips != null)
+                foreach (Image pip in pips) pip.color = new Color(1f, 1f, 1f, .28f);
         }
 
         public void Arm()

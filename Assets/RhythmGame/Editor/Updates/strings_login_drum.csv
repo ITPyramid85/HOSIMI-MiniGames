@@ -1,0 +1,55 @@
+﻿key,zh-Hans,en,ko,ja
+settings.google,账号,Account,계정,アカウント
+settings.google_sign_in,Google 登录,Google,Google 로그인,Google
+login.tagline,用鼓垫一起咚咚咚！,Let's drum together with your pad!,드럼 패드로 같이 둥둥둥!,ドラムパッドでいっしょにドンドン！
+login.google,用 Google 账号登录,Sign in with Google,Google 계정으로 로그인,Googleでログイン
+login.guest,游客开始,Play as guest,게스트로 시작,ゲストではじめる
+login.start,开始,Start,시작하기,はじめる
+login.guest_account,游客,Guest,게스트,ゲスト
+login.google_account,Google 账号,Google account,Google 계정,Google アカウント
+login.google_not_ready,Google 登录还在准备中，请先用游客开始。,Google sign-in is coming soon. Start as a guest for now.,Google 로그인은 준비 중이에요. 지금은 게스트로 시작해 주세요.,Google ログインは準備中です。今はゲストではじめてね。
+login.failed,登录失败，请重试。,Sign-in failed. Please try again.,로그인에 실패했어요. 다시 시도해 주세요.,ログインできませんでした。もう一度お試しください。
+login.local_note,游客的记录只保存在这台设备上。登录后换手机也能恢复。,Guest progress stays on this device only. Sign in to keep it on a new phone.,게스트 기록은 이 기기에만 저장돼요. 로그인하면 다른 기기에서도 이어할 수 있어요.,ゲストの記録はこの端末だけに保存されます。ログインすると機種変更しても続けられます。
+pad.title,鼓垫测试,Drum test,드럼 패드 테스트,ドラムパッドテスト
+pad.scan,搜索,Search,찾기,さがす
+pad.scanning_short,搜索中,Searching,찾는 중,さがし中
+pad.scanning,正在搜索蓝牙鼓…,Looking for the drum over Bluetooth…,블루투스로 드럼을 찾는 중…,Bluetoothでドラムをさがしています…
+pad.connected_bluetooth,已连接 · 蓝牙 MIDI,Connected · Bluetooth MIDI,연결됨 · 블루투스 MIDI,接続中 · Bluetooth MIDI
+pad.connected_usb,已连接 · USB,Connected · USB,연결됨 · USB,接続中 · USB
+pad.not_connected,未连接 · 打开鼓的电源后点「搜索」,"Not connected · Turn the drum on, then tap Search",연결 안 됨 · 드럼을 켜고 '찾기'를 누르세요,未接続 · ドラムの電源を入れて「さがす」
+pad.bluetooth_off,蓝牙已关闭，请先打开手机蓝牙,Bluetooth is off. Turn it on first.,블루투스가 꺼져 있어요. 먼저 켜 주세요.,Bluetoothがオフです。先にオンにしてね。
+pad.unsupported,这台设备不能直接连鼓，可以先点画面上的鼓垫试试,This device can't connect to the drum. Try the pads on screen.,이 기기는 드럼을 연결할 수 없어요. 화면의 패드를 눌러 보세요.,この端末はドラムにつなげません。画面のパッドで試してね。
+pad.audio_bluetooth,声音：蓝牙音箱（如鼓的 EDRUM），补偿单独记录,"Sound: Bluetooth speaker (e.g. the drum's EDRUM), calibrated separately","소리: 블루투스 스피커(드럼의 EDRUM 등), 보정은 따로 저장",音：Bluetoothスピーカー（ドラムのEDRUMなど）、補正は別に保存
+pad.audio_phone,声音：手机喇叭或有线耳机,Sound: phone speaker or wired headphones,소리: 휴대폰 스피커 또는 유선 이어폰,音：スマホのスピーカーか有線イヤホン
+pad.hits,刚才敲的,Last hits,방금 친 패드,さっきたたいた
+pad.hits_empty,敲一下鼓垫试试,Strike a pad to try,패드를 한번 쳐 보세요,パッドをたたいてみよう
+pad.velocity,力度 ,Force ,세기 ,強さ 
+pad.pedal,踏板,Pedal,페달,ペダル
+pad.name_0,吊镲,Crash,크래시,クラッシュ
+pad.name_1,叮叮,Ride,라이드,ライド
+pad.name_2,踩镲,Hi-hat,하이햇,ハイハット
+pad.name_3,桶鼓1,Tom 1,탐 1,タム1
+pad.name_4,桶鼓2,Tom 2,탐 2,タム2
+pad.name_5,军鼓,Snare,스네어,スネア
+pad.name_6,军鼓边,Cross-stick,크로스 스틱,クロススティック
+pad.name_7,桶鼓3,Tom 3,탐 3,タム3
+pad.name_8,踩镲踏板,Hi-hat pedal,하이햇 페달,ハイハットペダル
+pad.name_9,底鼓,Kick,킥,キック
+pad.calibration,延迟校准,Latency,지연 보정,遅延の調整
+pad.calibration_hint,跟着「嗒」的节拍敲任意鼓垫 10 次,"Strike any pad on each click, 10 times",'딱' 소리에 맞춰 아무 패드나 10번 치세요,「カッ」に合わせてパッドを10回たたこう
+pad.needs_drum,连上鼓之后才能校准,Connect the drum to calibrate,드럼을 연결해야 보정할 수 있어요,ドラムをつなぐと調整できます
+pad.current_offset,当前补偿 ,Current offset ,현재 보정 ,今の補正 
+pad.start,开始校准,Calibrate,보정 시작,調整する
+pad.stop,停止,Stop,멈추기,やめる
+pad.listen,先听两拍…,Listen for two beats…,두 박자 들어 보세요…,まず2拍きいて…
+pad.hit_on_beat,跟着节拍敲 ,Strike on the beat ,박자에 맞춰 치기 ,ビートに合わせて 
+pad.done,完成：,Done: ,완료: ,完了：
+pad.spread,偏差 ,spread ,편차 ,ばらつき 
+pad.unstable,敲得不太稳，建议再测一次,Hits were uneven. Try once more.,치는 박자가 고르지 않아요. 한 번 더 해 보세요.,ばらつきが大きいので、もう一度どうぞ。
+pad.not_enough,有效敲击不够，请再试一次,Not enough hits. Please try again.,유효한 타격이 부족해요. 다시 해 주세요.,有効な打数が足りません。もう一度どうぞ。
+pad.muted,音效被静音了，请先调高音效音量,Sound effects are muted. Turn them up first.,효과음이 꺼져 있어요. 먼저 효과음을 켜 주세요.,効果音がミュートです。先に音量を上げてね。
+settings.pad_connected,已连接,Connected,연결됨,接続中
+settings.apple_sign_in,Apple 登录,Apple,Apple 로그인,Apple
+settings.delete_account,删除账号,Delete account,계정 삭제,アカウント削除
+login.apple,用 Apple 登录,Sign in with Apple,Apple로 로그인,Appleでサインイン
+login.apple_not_ready,Apple 登录还在准备中，请先用游客开始。,Sign in with Apple is coming soon. Start as a guest for now.,Apple 로그인은 준비 중이에요. 지금은 게스트로 시작해 주세요.,Appleサインインは準備中です。今はゲストではじめてね。

@@ -21,12 +21,19 @@ namespace RhythmGame
         protected override double LeadSeconds { get { return WhackAMoleChart.ShowSeconds * .5; } }
         protected override int[] PadsFor(int stage) { return WhackAMoleChart.Pads(stage); }
         protected override List<BeatCue> Generate(int seed) { return WhackAMoleChart.Generate(seed); }
+        protected override RectTransform FlashTarget(int pad)
+        {
+            if (holes == null || pad < 0 || pad >= holes.Length || holes[pad] == null) return null;
+            return holes[pad].transform as RectTransform;
+        }
 
         protected override void Awake()
         {
-            foreach (MoleHoleView hole in holes) hole.Pressed += Press;
+            foreach (MoleHoleView hole in holes) hole.Pressed += OnTouched;
             base.Awake();
         }
+
+        private void OnTouched(int pad) { NoteScreenTouch(); Press(pad); }
 
         // Moles peak on their beat.
         protected override void PresentCue(BeatCue cue, float secondsToBeat) { holes[cue.Pad].Rise(cue, secondsToBeat); }
@@ -49,7 +56,7 @@ namespace RhythmGame
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            foreach (MoleHoleView hole in holes) if (hole != null) hole.Pressed -= Press;
+            foreach (MoleHoleView hole in holes) if (hole != null) hole.Pressed -= OnTouched;
         }
     }
 }

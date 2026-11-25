@@ -25,6 +25,9 @@ namespace RhythmGame
         [SerializeField] private Text hits, meters;
         [SerializeField] private Image[] drums;
         private Vector3[] drumScale;
+        private Color[] topRest, bodyRest, keyRest;
+        private int aimed = -1;
+        private Coroutine pulse;
         private Vector2[] brickHome;
         private Vector2 wallHome, heroHome, fishHome;
         private Coroutine crackRoutine, motion, lunge, swing;
@@ -37,10 +40,19 @@ namespace RhythmGame
             Home();
             if (drums == null) return;
             drumScale = new Vector3[drums.Length];
+            topRest = new Color[drums.Length];
+            bodyRest = new Color[drums.Length];
+            keyRest = new Color[drums.Length];
             for (int i = 0; i < drums.Length; i++)
             {
                 if (drums[i] == null) continue;
                 drumScale[i] = drums[i].rectTransform.localScale;
+                Image top = DrumPart(i, "Top");
+                Image body = DrumPart(i, "Body");
+                Text key = DrumKey(i);
+                if (top != null) topRest[i] = top.color;
+                if (body != null) bodyRest[i] = body.color;
+                if (key != null) keyRest[i] = key.color;
                 WallPad pad = drums[i].GetComponent<WallPad>();
                 if (pad == null) pad = drums[i].gameObject.AddComponent<WallPad>();
                 pad.Bind(owner, i);
@@ -64,6 +76,7 @@ namespace RhythmGame
         {
             frozen = true;
             StopAll();
+            ClearAim();
             waterWidth = waterTarget;
             waterHeight = waterHeightTarget;
             ApplyWater(0f);
@@ -91,6 +104,7 @@ namespace RhythmGame
             if (crack != null) crack.color = new Color(1f, 1f, 1f, 0f);
             if (chest != null) chest.gameObject.SetActive(false);
             if (hits != null) hits.text = "";
+            ClearAim();
             waterTarget = waterWidth = WaterSafe;
             waterHeightTarget = waterHeight = WaterLow;
             ApplyWater(0f);
@@ -107,6 +121,23 @@ namespace RhythmGame
             motion = StartCoroutine(SlideIn());
         }
 
+        // The drum lights when its beat can be struck and stays lit until that beat is settled,
+        // so a strike on a lit drum always counts. It flashes white on the beat itself.
+        public void Pulse(int pad, float secondsToBeat)
+        {
+            aimed = pad;
+            if (pulse != null) StopCoroutine(pulse);
+            pulse = StartCoroutine(PulseAtBeat(pad, secondsToBeat));
+        }
+
+        public void ClearAim()
+        {
+            aimed = -1;
+            if (pulse != null) StopCoroutine(pulse);
+            pulse = null;
+            PaintAim(0f);
+        }
+
         // The crack stays dark until just before the beat, then blinks to mark the strike.
         public void Crack(float seconds)
         {
@@ -117,6 +148,7 @@ namespace RhythmGame
         public void Chip(int left)
         {
             if (crackRoutine != null) StopCoroutine(crackRoutine);
+            ClearAim();
             if (hits != null) hits.text = left > 1 ? left.ToString() : "";
             if (crack != null) crack.color = new Color(1f, 1f, 1f, 1f);
             if (left > 0)
@@ -132,6 +164,7 @@ namespace RhythmGame
             if (crack != null) crack.color = new Color(1f, 1f, 1f, 0f);
             if (chest != null) chest.gameObject.SetActive(false);
             if (hits != null) hits.text = "";
+            ClearAim();
             if (motion != null) StopCoroutine(motion);
             motion = StartCoroutine(Tumble());
             if (!swimming && hero != null)
@@ -144,6 +177,7 @@ namespace RhythmGame
         public void Hold()
         {
             if (crack != null) crack.color = new Color(1f, 1f, 1f, 0.15f);
+            ClearAim();
             if (motion != null) StopCoroutine(motion);
             motion = StartCoroutine(Shake(12f));
         }
@@ -162,6 +196,7 @@ namespace RhythmGame
         public void Drown()
         {
             swimming = true;
+            ClearAim();
             if (lunge != null) StopCoroutine(lunge);
             if (hero != null) hero.gameObject.SetActive(false);
             if (fish != null)
@@ -171,6 +206,12 @@ namespace RhythmGame
             }
             waterTarget = DrownWidth;
             waterHeightTarget = DrownHeight;
+        }
+
+        public RectTransform Drum(int pad)
+        {
+            if (drums == null || pad < 0 || pad >= drums.Length || drums[pad] == null) return null;
+            return drums[pad].rectTransform;
         }
 
         public void Strike(int pad)
@@ -203,6 +244,8 @@ namespace RhythmGame
         private void StopAll()
         {
             if (crackRoutine != null) StopCoroutine(crackRoutine);
+            if (pulse != null) StopCoroutine(pulse);
+            pulse = null;
             if (motion != null) StopCoroutine(motion);
             if (lunge != null) StopCoroutine(lunge);
             if (swing != null) StopCoroutine(swing);
@@ -338,6 +381,55 @@ namespace RhythmGame
             hammer.localEulerAngles = new Vector3(0f, 0f, RestAngle);
         }
 
+        private IEnumerator PulseAtBeat(int pad, float secondsToBeat)
+        {
+            PaintAim(0f);
+            float wait = Mathf.Max(0f, secondsToBeat - 0.2f);
+            if (wait > 0f) yield return new WaitForSeconds(wait);
+            float t = 0f;
+            const float duration = 0.32f;
+            while (t < duration)
+            {
+                if (aimed != pad) yield break;
+                t += Time.deltaTime;
+                PaintAim(Mathf.Sin(Mathf.Clamp01(t / duration) * Mathf.PI));
+                yield return null;
+            }
+            if (aimed == pad) PaintAim(0f);
+            pulse = null;
+        }
+
+        // flash 0 is the steady "this drum" color. flash 1 is the beat.
+        private void PaintAim(float flash)
+        {
+            if (drums == null) return;
+            for (int i = 0; i < drums.Length; i++)
+            {
+                if (drums[i] == null || topRest == null || i >= topRest.Length) continue;
+                float amount = i == aimed ? Mathf.Lerp(0.62f, 1f, Mathf.Clamp01(flash)) : 0f;
+                Image top = DrumPart(i, "Top");
+                Image body = DrumPart(i, "Body");
+                Text key = DrumKey(i);
+                if (top != null) top.color = Color.Lerp(topRest[i], Color.Lerp(topRest[i], Color.white, 0.82f), amount);
+                if (body != null && bodyRest != null) body.color = Color.Lerp(bodyRest[i], Color.Lerp(bodyRest[i], Color.white, 0.45f), amount);
+                if (key != null && keyRest != null) key.color = Color.Lerp(keyRest[i], Color.white, amount);
+            }
+        }
+
+        private Image DrumPart(int pad, string name)
+        {
+            if (drums == null || pad < 0 || pad >= drums.Length || drums[pad] == null) return null;
+            Transform part = drums[pad].transform.Find(name);
+            return part != null ? part.GetComponent<Image>() : null;
+        }
+
+        private Text DrumKey(int pad)
+        {
+            if (drums == null || pad < 0 || pad >= drums.Length || drums[pad] == null) return null;
+            Transform part = drums[pad].transform.Find("Key");
+            return part != null ? part.GetComponent<Text>() : null;
+        }
+
         private IEnumerator Punch(int pad)
         {
             RectTransform drum = drums[pad].rectTransform;
@@ -366,6 +458,7 @@ namespace RhythmGame
             public void OnPointerDown(PointerEventData eventData)
             {
                 if (eventData.button != PointerEventData.InputButton.Left || owner == null) return;
+                owner.NoteScreenTouch();
                 owner.Press(pad);
             }
         }

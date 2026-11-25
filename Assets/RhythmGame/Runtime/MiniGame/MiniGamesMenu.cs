@@ -1,11 +1,10 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace RhythmGame
 {
     // The ten drum mini-games of plan §4, in plan order. A card shows the longest time only.
-    // Wall Breaker stays locked until every other game has a recorded time. Best stage stays in the save.
+    // A card is playable once its scene exists. Best stage stays in the save.
     public sealed class MiniGamesMenu : MonoBehaviour
     {
         public sealed class Entry
@@ -15,9 +14,9 @@ namespace RhythmGame
         }
 
         public static readonly Entry[] Games = {
-            new Entry("mochi", "Mochi"), new Entry("whack", "WhackAMole"), new Entry("nails", "DrivingNail"), new Entry("wood", "ChoppingWood"),
-            new Entry("smith", "Smithy"), new Entry("ice", "IceFishing"), new Entry("laundry", "FabricBeating"), new Entry("echo", "TappingBeat"),
-            new Entry("race", "RabbitTurtle"), new Entry("wall", "BreakingBricks") };
+            new Entry("mochi", "01.Mochi"), new Entry("whack", "02.WhackAMole"), new Entry("nails", "03.DrivingNail"), new Entry("wood", "04.ChoppingWood"),
+            new Entry("smith", "05.Smithy"), new Entry("ice", "06.IceFishing"), new Entry("laundry", "07.FabricBeating"), new Entry("echo", "08.TappingBeat"),
+            new Entry("race", "09.RabbitTurtle"), new Entry("wall", "10.BreakingBricks") };
 
         [SerializeField] private Button[] cards;   // same order as Games
         [SerializeField] private Button backButton;
@@ -50,7 +49,7 @@ namespace RhythmGame
                 card.Find("Name").GetComponent<Text>().text = Strings.T("games." + game.Id);
                 MiniGameRecord record = data.Player.FindMiniGame(game.Id);
                 bool open = IsPlayable(game, data.Player);
-                card.Find("Best").GetComponent<Text>().text = !open ? LockedLine(game, data.Player) :
+                card.Find("Best").GetComponent<Text>().text = !open ? Strings.T("games.locked") :
                     record == null ? Strings.T("games.not_played") : LongestTime(record);
                 cards[i].interactable = open;
                 Image face = cards[i].targetGraphic as Image;
@@ -64,19 +63,10 @@ namespace RhythmGame
             return Strings.T("games.longest") + MiniGameController.Clock(record.bestSeconds);
         }
 
-        private static string LockedLine(Entry game, PlayerData player)
-        {
-            if (game.Id == "wall" && game.Scene != null)
-                return Strings.T("wall.locked") + WallChart.RecordedTimes(player) + "/" + WallChart.TimesToOpen;
-            return Strings.T("games.locked");
-        }
-
-        // Wall Breaker is the last card. It opens once every other mini-game has a longest time.
+        // Every built game opens from the list, including Wall Breaker.
         public static bool IsPlayable(Entry game, PlayerData player)
         {
-            if (game == null || string.IsNullOrEmpty(game.Scene)) return false;
-            if (game.Id != "wall") return true;
-            return WallChart.Unlocked(player);
+            return game != null && !string.IsNullOrEmpty(game.Scene);
         }
 
         public void Open(Entry game)
@@ -88,7 +78,7 @@ namespace RhythmGame
         {
             if (loading) return;
             loading = true;
-            SceneManager.LoadSceneAsync(scene);
+            SceneTransition.Load(scene);
         }
     }
 }

@@ -22,17 +22,19 @@ namespace RhythmGame.Tests
             Assert.AreEqual(FabricChart.FirstCue, cues[0].Time, .001);
             Assert.AreEqual(FabricChart.LeftPad, cues[0].Pad, "The first blow is the left club, pad 4.");
             Assert.AreEqual(FabricChart.RightPad, cues[1].Pad, "The next blow is the right club, pad 5.");
+            Stage window = StageTable.Get(1);
+            Assert.IsTrue(cues.TrueForAll(c => c.Time < FabricChart.RunSeconds), "Every blow is inside the two minutes.");
+            Assert.Greater(cues[cues.Count - 1].Time, FabricChart.RunSeconds - 5, "Blows keep coming to the end.");
             for (int i = 1; i < cues.Count; i++)
             {
                 Assert.AreNotEqual(cues[i].Pad, cues[i - 1].Pad, "Left and right never repeat.");
                 Assert.GreaterOrEqual(cues[i].Time - cues[i - 1].Time, FabricChart.BeatSeconds / 2 - 1e-9);
-                Stage stage = StageTable.At(cues[i].Time);
-                Assert.AreEqual(stage.GoodMs, cues[i].GoodMs);
-                Assert.AreEqual(stage.PerfectMs, cues[i].PerfectMs);
+                Assert.AreEqual(window.GoodMs, cues[i].GoodMs);
+                Assert.AreEqual(window.PerfectMs, cues[i].PerfectMs);
             }
-            int firstMinute = cues.Count(c => c.Time < 60);
-            int lastMinute = cues.Count(c => c.Time >= 420);
-            Assert.Greater(lastMinute, firstMinute * 2, "Stage 10 beats far more often than the opening.");
+            int firstHalf = cues.Count(c => c.Time < 60);
+            int lastHalf = cues.Count(c => c.Time >= 60);
+            Assert.Greater(lastHalf, firstHalf, "Later blows come more often than the opening.");
         }
 
         [Test]

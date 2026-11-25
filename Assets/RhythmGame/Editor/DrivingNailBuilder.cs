@@ -50,13 +50,10 @@ namespace RhythmGame.Editor
             PixelMenuBuilder.Place(lip.rectTransform, new Vector2(0, 112), new Vector2(700, Px * 2));
             lip.raycastTarget = false;
 
-            var nails = new Image[6];
-            for (int i = 0; i < nails.Length; i++)
-            {
-                nails[i] = MiniGameSceneBuilder.Art("Nail" + i, board, art["nail"], Vector2.zero, NailScale);
-                nails[i].rectTransform.pivot = new Vector2(.5f, 1f);
-                PixelMenuBuilder.Place(nails[i].rectTransform, new Vector2(-250 + i * 100, 132), nails[i].rectTransform.sizeDelta);
-            }
+            // One nail stays in the scene. DrivingNailView copies it for each nail that comes up.
+            Image nail = MiniGameSceneBuilder.Art("Nail", board, art["nail"], Vector2.zero, NailScale);
+            nail.rectTransform.pivot = new Vector2(.5f, 1f);
+            PixelMenuBuilder.Place(nail.rectTransform, new Vector2(0, 132), nail.rectTransform.sizeDelta);
             Image hammer = MiniGameSceneBuilder.Art("Hammer", board, art["hammer"], Vector2.zero, HammerScale);
             hammer.rectTransform.pivot = new Vector2(.5f, 1f);
             PixelMenuBuilder.Place(hammer.rectTransform, new Vector2(-250, 132 + hammer.rectTransform.sizeDelta.y), hammer.rectTransform.sizeDelta);
@@ -91,8 +88,7 @@ namespace RhythmGame.Editor
             PixelMenuBuilder.Assign(view, "board", board, "hammer", hammer.rectTransform, "carpenter", carpenter.rectTransform, "furniture", furniture.rectTransform,
                 "carpenterImage", carpenter, "furnitureImage", furniture, "countText", count, "caption", caption, "bubble", bubble,
                 "nailStraight", art["nail"], "nailBent", art["bent"], "carpenterIdle", art["carpenter"], "carpenterScratch", art["scratch"],
-                "chair", art["chair"], "desk", art["desk"], "house", art["house"]);
-            PixelMenuBuilder.AssignArray(view, "nails", nails);
+                "chair", art["chair"], "desk", art["desk"], "house", art["house"], "nailTemplate", nail);
             PixelMenuBuilder.AssignArray(view, "dust", dust);
             PixelMenuBuilder.AssignArray(view, "collected", collected);
 

@@ -31,6 +31,7 @@ namespace RhythmGame
                 label.resizeTextForBestFit = true;
                 label.verticalOverflow = VerticalWrapMode.Truncate;
             }
+            PixelChrome.Apply(transform);
         }
 
         // Per language, so Japanese gets Japanese glyph shapes and Korean a Hangul face first. Names cover

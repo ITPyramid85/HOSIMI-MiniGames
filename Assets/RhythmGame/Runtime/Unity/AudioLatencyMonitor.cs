@@ -43,7 +43,11 @@ namespace RhythmGame
 #endif
             var data = GameManager.Instance.Data;
             bool bluetooth = output == AudioOutputKind.Bluetooth || output == AudioOutputKind.BluetoothConnected;
-            double effective = data.Player.inputOffsetMs + data.Settings.BluetoothCompensationMs(bluetooth);
+            // With the drum connected, the pad measurement already covers output and input; otherwise
+            // (touch play) the touch offset plus the Bluetooth headphone compensation applies.
+            bool drum = DrumInput.Instance != null && DrumInput.Instance.IsConnected;
+            double effective = drum ? data.Settings.PadOffsetMs(bluetooth)
+                : data.Player.inputOffsetMs + data.Settings.BluetoothCompensationMs(bluetooth);
             bool changed = initialized && (output != Output || Math.Abs(effective - EffectiveOffsetMs) > .000001);
             Output = output; EffectiveOffsetMs = effective; initialized = true;
             if (changed && Changed != null) Changed();

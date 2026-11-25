@@ -59,6 +59,8 @@ namespace RhythmGame
 
         public void OnPointerDown(PointerEventData e) { if (Pressed != null) Pressed(); }
 
+        public RectTransform Mallet { get { return mallet; } }
+
         // Every accepted strike swings the mallet, whatever the judge then makes of it.
         public void SwingMallet() { Swing(); }
 

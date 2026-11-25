@@ -85,14 +85,14 @@ namespace RhythmGame.Tests
             foreach (BeatCue cue in game.Judge.Cues.ToArray())
                 if (cue.Kind != CueKind.Forbidden) game.PressAt(cue.Pad, cue.Time + offset);
             game.AdvanceTo(MochiChart.RunSeconds + 1);
-            Assert.AreEqual(MiniGameState.Result, game.State, "Surviving the minute opens the clear dialog.");
+            Assert.AreEqual(MiniGameState.Result, game.State, "Surviving the 8 minutes opens the clear dialog.");
             Assert.IsTrue(game.Result.Cleared);
-            Assert.AreEqual(1, game.Result.Stage);
-            Assert.AreEqual(DrumstickReward.For(MochiChart.RunSeconds, 1, true), game.Result.Drumsticks);
+            Assert.AreEqual(10, game.Result.Stage);
+            Assert.AreEqual(DrumstickReward.For(MochiChart.RunSeconds, 10, true), game.Result.Drumsticks);
             Assert.AreEqual(before + game.Result.Drumsticks, GameManager.Instance.Data.Player.coins, "Paid into the shared balance.");
-            Assert.AreEqual(1, GameManager.Instance.Data.Player.FindMiniGame(game.GameId).bestStage);
+            Assert.AreEqual(10, GameManager.Instance.Data.Player.FindMiniGame(game.GameId).bestStage);
             string body = game.transform.Find("Modal/Card/Body").GetComponent<Text>().text;
-            StringAssert.Contains("1:00", body, "Result: time played,");
+            StringAssert.Contains("8:00", body, "Result: time played,");
             StringAssert.Contains(game.Result.Drumsticks.ToString("N0"), body, "and drumsticks (client reply v5 §1-3).");
             yield return new WaitForSecondsRealtime(1f);
             GameSceneTests.Capture("mochi-result-preview.png");

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace RhythmGame
 {
-    // Five nails, one strike each. One miss bends that nail; the next of the five still comes.
-    // Two seated nails light the chair, three the desk, five the house.
+    // Nails keep coming for two minutes, one strike each, all on stage 1. One miss bends that nail; the next still comes.
+    // Two seated light the chair, three the desk, and five the house. The two minutes then end the run.
     public static class NailChart
     {
-        public const double Bpm = 120, FirstCue = 2;
+        public const double Bpm = 120, FirstCue = 2, RunSeconds = 120;
         public const int Pad = 6, NailCount = 5, Hits = 1, ChairAt = 2, DeskAt = 3, HouseAt = 5;
         public const int RecoverBeats = 4;
         public enum Piece { Chair, Desk, House }
@@ -22,11 +22,12 @@ namespace RhythmGame
             double beat = BeatSeconds;
             double time = FirstCue;
             double gap = 2 * beat;
-            for (int nail = 0; nail < NailCount; nail++)
+            double last = RunSeconds - 2;
+            for (int nail = 0; time <= last; nail++)
             {
                 for (int h = 0; h < Hits; h++)
                 {
-                    Stage window = StageTable.At(time);
+                    Stage window = StageTable.Get(1);
                     cues.Add(new BeatCue { Index = cues.Count, Time = time, Pad = Pad, Variant = nail, PerfectMs = window.PerfectMs, GoodMs = window.GoodMs });
                     time += gap;
                 }
@@ -59,7 +60,7 @@ namespace RhythmGame
                 if (cue.Variant <= missed.Variant) continue;
                 if (cue.Time + .000001 < start) continue;
                 cue.Time -= shift;
-                Stage window = StageTable.At(cue.Time);
+                Stage window = StageTable.Get(1);
                 cue.PerfectMs = window.PerfectMs;
                 cue.GoodMs = window.GoodMs;
             }

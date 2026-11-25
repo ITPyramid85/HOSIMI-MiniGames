@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace RhythmGame
@@ -36,7 +35,6 @@ namespace RhythmGame
         private readonly List<AudioSource> heldAudio = new List<AudioSource>();
         [SerializeField] private Image[] padDiagram;
         private PopupTransition modalTransition;
-        private GameUIAnimator animator;
         private AudioLatencyMonitor latency;
         private List<BeatCue> cues;
         protected List<BeatCue> Chart { get { return cues; } }
@@ -44,6 +42,20 @@ namespace RhythmGame
         private int nextCue, stageShown;
         private float judgementLife, bannerLife;
         private Coroutine comboPunch, musicRetry;
+        private PadFlashPool flashes;
+        private DrumstickHud sticks;
+        private long shownRun;
+        private bool screenTouch, padInput, sticksHeld;
+        // Drumsticks follow accurate hits only. A miss, an empty strike or a wrong note closes the clock.
+        private double credited, creditFrom;
+        private bool crediting = true;
+        private int stageWhileMissing = 1;
+        // Same places as the prompt's pad diagram, in the 1280x720 canvas. A game can put the flash
+        // on its own target instead.
+        private static readonly Vector2[] PadSpot = {
+            new Vector2(-400f, 140f), new Vector2(400f, 140f),
+            new Vector2(-216f, -16f), new Vector2(0f, -16f), new Vector2(216f, -16f),
+            new Vector2(-216f, -196f), new Vector2(0f, -196f), new Vector2(216f, -196f) };
         public MiniGameState State { get; private set; }
         public BeatJudge Judge { get; private set; }
         public MiniGameScore Score { get; private set; }
@@ -66,7 +78,7 @@ namespace RhythmGame
         protected virtual int DisplayStage { get { return Stage.Number; } }
         // Fill of the stage bar. A game with its own ladder overrides this; rewards still use Stage.
         protected virtual double StageProgress { get { return StageTable.ProgressIn(played); } }
-        // Surviving to this time opens the clear dialog. Other games still use the shared 8-minute run.
+        // Surviving to this time opens the clear dialog. Every game is the shared 8-minute run.
         protected virtual double ClearAtSeconds { get { return StageTable.ClearSeconds; } }
         protected virtual int RewardStage { get { return Stage.Number; } }
         protected abstract List<BeatCue> Generate(int seed);
@@ -76,6 +88,8 @@ namespace RhythmGame
         protected abstract void ShowOutcome(CueResult result);
         protected virtual void ClearField() { }
         protected virtual void OnRoundFinished(bool cleared) { }
+        // Extra result line. Read before ClearField, so a game can still see its own counters.
+        protected virtual string ResultExtra { get { return ""; } }
         // Nail driving waits until the head meets the nail, so the hit and the miss share that moment.
         protected virtual bool PlaysJudgementAudio { get { return true; } }
         // A game can finish the fly-off before the result modal replaces the field.
@@ -104,13 +118,174 @@ namespace RhythmGame
             music.spatialBlend = 0f;
             if (music.clip != null) music.clip.LoadAudioData();
             modalTransition = PopupTransition.For(modal);
-            animator = GetComponent<GameUIAnimator>();
             primaryButton.onClick.AddListener(PrimaryAction);
             menuButton.onClick.AddListener(BackToMenu);
             EnsureCompleteButton();
             if (stageText != null) stageText.gameObject.SetActive(false);
             ShowPrompt();
             GetComponent<MenuTypography>().Apply();
+            flashes = PadFlashPool.Create(transform);
+            BuildStickHud();
+        }
+
+        // Lifetime total at the top. "+n" rises from the score into it while a pad round is paying.
+        private void BuildStickHud()
+        {
+            if (flashes == null) return;
+            if (scoreText != null) flashes.SetFont(scoreText.font);
+            sticks = DrumstickHud.Create(flashes, scoreText != null ? scoreText.font : null);
+            sticks.FollowScore(scoreText != null ? scoreText.rectTransform : null);
+            sticks.Awards(false);
+            sticks.Reset(Bank());
+        }
+
+        private static long Bank()
+        {
+            GameManager manager = GameManager.Instance;
+            if (manager == null || !manager.IsReady || manager.Data == null || manager.Data.Player == null) return 0;
+            return manager.Data.Player.coins;
+        }
+
+        // A connected drum, or the keyboard and gamepad that stand in for it, pays. A touch-only round does not.
+        private bool PaysSticks
+        {
+            get
+            {
+                bool drum = DrumInput.Instance != null && DrumInput.Instance.IsConnected;
+                if (drum || padInput) return true;
+                return !screenTouch;
+            }
+        }
+
+        // Pointer taps on the field. Touch-only play earns nothing and shows no "+n".
+        public void NoteScreenTouch()
+        {
+            if (State == MiniGameState.Playing) screenTouch = true;
+        }
+
+        protected void NotePadInput()
+        {
+            if (State == MiniGameState.Playing) padInput = true;
+        }
+
+        private void TickSticks()
+        {
+            if (sticks == null) return;
+            if (flashes != null) flashes.transform.SetAsLastSibling();
+            sticks.Awards(PaysSticks);
+            if (!PaysSticks)
+            {
+                if (!sticksHeld)
+                {
+                    sticksHeld = true;
+                    shownRun = 0;
+                    sticks.Reset(Bank());
+                }
+                return;
+            }
+            sticksHeld = false;
+            long running = EarnedSticks(false);
+            long gain = running - shownRun;
+            shownRun = running;
+            if (gain > 0) sticks.Award(gain);
+        }
+
+        // Time up to the last accurate hit. The open tail counts only when the run is still clean.
+        private double CreditedSeconds(bool includeOpen)
+        {
+            double now = Math.Min(Math.Max(0, played), StageTable.ClearSeconds);
+            double span = credited;
+            if (includeOpen && crediting) span += Math.Max(0, now - creditFrom);
+            if (span < 0) span = 0;
+            if (span > now) span = now;
+            return span;
+        }
+
+        // Stage bonus follows accurate time, and never a stage this game does not pay.
+        private int PayStage(double seconds, int cap)
+        {
+            int stage = StageTable.At(seconds).Number;
+            if (!crediting && stageWhileMissing < cap) cap = stageWhileMissing;
+            if (cap < 1) cap = 1;
+            if (cap > StageTable.Count) cap = StageTable.Count;
+            if (stage > cap) stage = cap;
+            if (stage < 1) stage = 1;
+            return stage;
+        }
+
+        private long EarnedSticks(bool includeOpen)
+        {
+            double seconds = CreditedSeconds(includeOpen);
+            return DrumstickReward.For(seconds, PayStage(seconds, RewardStage), false);
+        }
+
+        private void ResetCredit()
+        {
+            credited = 0;
+            creditFrom = 0;
+            crediting = true;
+            stageWhileMissing = 1;
+        }
+
+        // A Good or Perfect hit keeps the drumstick clock. Anything else stops it at the previous hit.
+        private void NoteAccuracy(CueResult result)
+        {
+            double at = result.Cue != null ? result.Cue.Time : played;
+            if (at < 0) at = 0;
+            if (at > StageTable.ClearSeconds) at = StageTable.ClearSeconds;
+            if (result.Outcome == CueOutcome.Hit)
+            {
+                if (crediting) credited += Math.Max(0, at - creditFrom);
+                crediting = true;
+                creditFrom = at;
+                return;
+            }
+            if (result.Outcome != CueOutcome.Missed && result.Outcome != CueOutcome.EmptyHit && result.Outcome != CueOutcome.ForbiddenHit)
+                return;
+            if (!crediting) return;
+            crediting = false;
+            creditFrom = at;
+            stageWhileMissing = RewardStage;
+            if (stageWhileMissing < 1) stageWhileMissing = 1;
+            if (stageWhileMissing > StageTable.Count) stageWhileMissing = StageTable.Count;
+        }
+
+        // Pays the sticks actually earned. Best time still uses the real clock.
+        protected MiniGameResult Settle(int stage, bool cleared)
+        {
+            if (stage < 1) stage = 1;
+            if (stage > StageTable.Count) stage = StageTable.Count;
+            long amount = 0;
+            if (PaysSticks)
+            {
+                double seconds = CreditedSeconds(true);
+                amount = DrumstickReward.For(seconds, PayStage(seconds, stage), cleared);
+                if (sticks != null)
+                {
+                    long gain = amount - shownRun;
+                    shownRun = amount;
+                    if (gain > 0) sticks.Award(gain);
+                    if (flashes != null) flashes.transform.SetAsLastSibling();
+                }
+            }
+            else if (sticks != null && !sticksHeld)
+            {
+                sticksHeld = true;
+                shownRun = 0;
+                sticks.Reset(Bank());
+            }
+            return GameManager.EnsureInstance().Data.RecordMiniGame(GameId, PlayedSeconds, stage, cleared, PaysSticks, amount);
+        }
+
+        // Where a strike on this pad should flash. Null uses the shared pad layout.
+        protected virtual RectTransform FlashTarget(int pad) { return null; }
+
+        protected void FlashPad(int pad, PadFlashPool.Kind kind)
+        {
+            if (flashes == null || pad < 0 || pad >= PadSpot.Length) return;
+            RectTransform target = FlashTarget(pad);
+            if (target != null) flashes.Play(target, kind);
+            else flashes.Play(PadSpot[pad], kind);
         }
 
         private void ShowPrompt()
@@ -126,6 +301,12 @@ namespace RhythmGame
             SetButtons(Strings.T("minigame.start"));
             modalTransition.Show();
             if (completeButton != null) completeButton.gameObject.SetActive(false);
+            if (sticks != null)
+            {
+                sticks.Awards(false);
+                sticks.Reset(Bank());
+            }
+            if (flashes != null) flashes.transform.SetAsLastSibling();
         }
 
         public void StartRound() { StartRound(Environment.TickCount); }
@@ -147,6 +328,16 @@ namespace RhythmGame
             nextCue = 0;
             played = 0;
             stageShown = 1;
+            shownRun = 0;
+            ResetCredit();
+            screenTouch = false;
+            padInput = false;
+            sticksHeld = false;
+            if (sticks != null)
+            {
+                sticks.Awards(true);
+                sticks.Reset(Bank());
+            }
             ClearField();
             ResetHud();
             anchor = AudioSettings.dspTime + .2;
@@ -169,10 +360,14 @@ namespace RhythmGame
             if (keyboard != null)
             {
                 for (int pad = 0; pad < PadKeys.Length; pad++)
-                    if (keyboard[PadKeys[pad]].wasPressedThisFrame) PressAt(pad, time);
-                if (DefaultPad >= 0 && keyboard.spaceKey.wasPressedThisFrame) PressAt(DefaultPad, time);
+                    if (keyboard[PadKeys[pad]].wasPressedThisFrame) { NotePadInput(); PressAt(pad, time); }
+                if (DefaultPad >= 0 && keyboard.spaceKey.wasPressedThisFrame) { NotePadInput(); PressAt(DefaultPad, time); }
             }
-            if (DefaultPad >= 0 && Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame) PressAt(DefaultPad, time);
+            if (DefaultPad >= 0 && Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame)
+            {
+                NotePadInput();
+                PressAt(DefaultPad, time);
+            }
             AdvanceTo(time);
             if (State != MiniGameState.Playing) return;
             PresentCues(time);
@@ -200,12 +395,24 @@ namespace RhythmGame
         // when the lives are gone or stage 10 is cleared. Update calls it every frame; tests call it directly.
         public void AdvanceTo(double songTime)
         {
-            if (State != MiniGameState.Playing) return;
+            if (State != MiniGameState.Playing) 
+                return;
             Judge.AdvanceTo(songTime);
-            if (State != MiniGameState.Playing) return;   // the last life went while settling
+
+            if (State != MiniGameState.Playing) 
+                return;   // the last life went while settling
+
             played = Math.Max(played, Math.Min(songTime, ClearAtSeconds));
             RefreshProgress();
-            if (played >= ClearAtSeconds && Judge.AllResolved) FinishRound();
+
+            if (played < ClearAtSeconds) return;
+
+            // Cues a game queued past the clear time are not part of the run and must not cost a life.
+            double clearAt = ClearAtSeconds;
+            Judge.Abandon(cue => cue.Time >= clearAt);
+
+            if (Judge.AllResolved) 
+                FinishRound();
         }
 
         private void RefreshProgress()
@@ -219,8 +426,10 @@ namespace RhythmGame
                 Play(comboSound);
                 StartCoroutine(PixelTween.Punch(countdownText.transform, .4f, .3f));
             }
+
             stageFill.fillAmount = PixelTween.Steps((float)StageProgress, 40);
             timerText.text = Clock(played);
+            if (State == MiniGameState.Playing) TickSticks();
         }
 
         public static string Clock(double seconds)
@@ -264,7 +473,12 @@ namespace RhythmGame
         // Exact-time entry for tests and future pad input that carries its own timestamps.
         public void PressAt(int pad, double songTime)
         {
-            if (confirming || State != MiniGameState.Playing || !AcceptsPad(pad) || Judge == null || !ScoresAt(songTime)) return;
+            if (confirming || State != MiniGameState.Playing) return;
+            if (!AcceptsPad(pad) || Judge == null || !ScoresAt(songTime))
+            {
+                FlashPad(pad, PadFlashPool.Kind.Miss);
+                return;
+            }
             OnAcceptedPad(pad);
             Judge.Press(pad, songTime);
         }
@@ -283,6 +497,7 @@ namespace RhythmGame
             if (reread != null) result = reread;
             // Settling can run ahead of the frame clock (tests, long frames); the run reaches the cue it judged.
             if (result.Cue != null) played = Math.Max(played, Math.Min(result.Cue.Time, ClearAtSeconds));
+            NoteAccuracy(result);
             Score.Add(result);
             ShowOutcome(result);
             switch (result.Outcome)
@@ -307,6 +522,9 @@ namespace RhythmGame
                     break;
             }
             RefreshScore(result.Outcome == CueOutcome.Hit);
+            if (result.Outcome == CueOutcome.Hit || result.Outcome == CueOutcome.EmptyHit || result.Outcome == CueOutcome.ForbiddenHit)
+                FlashPad(result.Pad, result.Outcome == CueOutcome.Hit && result.Grade == HitGrade.Perfect ? PadFlashPool.Kind.Perfect :
+                    result.Outcome == CueOutcome.Hit ? PadFlashPool.Kind.Good : PadFlashPool.Kind.Miss);
             if (Score.IsOver && !DeferGameOver) FinishRound();
         }
 
@@ -362,19 +580,35 @@ namespace RhythmGame
             judgementLife = .6f;
         }
 
+        // A full run clears by surviving to ClearAtSeconds. A game can clear sooner by overriding this.
+        protected virtual bool ClearedRun { get { return Score != null && !Score.IsOver && played >= ClearAtSeconds; } }
+
         // Ends the run: the lives ran out, stage 10 was cleared, or (from code) it is stopped where it is.
         public void FinishRound()
         {
-            if (State != MiniGameState.Playing) return;
-            if (confirming) { finishAfterResume = true; return; }
+            if (State != MiniGameState.Playing) 
+                return;
+
+            if (confirming) 
+            { 
+                finishAfterResume = true; 
+                return; 
+            }
+
+            bool cleared = ClearedRun;
+            string extra = ResultExtra;
+            
             State = MiniGameState.Result;
             music.Stop();
             ClearField();
             RefreshProgress();   // the HUD shows where the run actually ended
-            if (Score != null) PaintHearts(Score.Halves);
+
+            if (Score != null) 
+                PaintHearts(Score.Halves);
+
             countdownText.text = judgementText.text = "";
-            bool cleared = !Score.IsOver && played >= ClearAtSeconds;
-            Result = GameManager.EnsureInstance().Data.RecordMiniGame(GameId, played, RewardStage, cleared);
+            Result = Settle(RewardStage, cleared);
+
             // The result names the clear and shows only the time and the drumsticks earned.
             modalTitle.text = Strings.T(cleared ? "minigame.cleared" : GameOverKey);
             modalBody.text =
@@ -383,7 +617,13 @@ namespace RhythmGame
             padDiagram[0].transform.parent.gameObject.SetActive(false);
             SetButtons(Strings.T("minigame.play_again"));
             modalTransition.Show();
-            if (completeButton != null) completeButton.gameObject.SetActive(false);
+
+            if (flashes != null) 
+                flashes.transform.SetAsLastSibling();
+
+            if (completeButton != null) 
+                completeButton.gameObject.SetActive(false);
+
             OnRoundFinished(cleared);
         }
 
@@ -512,8 +752,7 @@ namespace RhythmGame
         {
             if (confirming) { ResumeFromExit(); return; }
             if (State == MiniGameState.Playing) { music.Stop(); State = MiniGameState.Ready; }
-            if (animator != null) animator.PlayExit(() => SceneManager.LoadSceneAsync("MiniGames"));
-            else SceneManager.LoadSceneAsync("MiniGames");
+            SceneTransition.Load("MiniGames");
         }
 
         private void ResetHud()

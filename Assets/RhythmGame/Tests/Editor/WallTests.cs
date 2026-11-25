@@ -14,7 +14,7 @@ namespace RhythmGame.Tests
             var player = new PlayerData();
             Assert.AreEqual(0, WallChart.RecordedTimes(player));
             Assert.IsFalse(WallChart.Unlocked(player));
-            Assert.IsFalse(MiniGamesMenu.IsPlayable(MiniGamesMenu.Games[9], player));
+            Assert.IsTrue(MiniGamesMenu.IsPlayable(MiniGamesMenu.Games[9], player), "Wall Breaker is built, so its card opens with the others.");
             for (int i = 0; i < 8; i++)
                 player.miniGames.Add(new MiniGameRecord { gameId = MiniGamesMenu.Games[i].Id, plays = 1, bestStage = 6, bestSeconds = 30 });
             Assert.AreEqual(8, WallChart.RecordedTimes(player));

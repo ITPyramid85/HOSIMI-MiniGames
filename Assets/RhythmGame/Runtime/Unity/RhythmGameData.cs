@@ -12,6 +12,9 @@ namespace RhythmGame
         public GameConfig Config { get; private set; }
         public PlayerData Player { get { return progression.Player; } }
         public PlayerSettings Settings { get { return Player.settings; } }
+        public AccountInfo Account { get { return Player.account; } }
+        // Swap for the server backend once it exists; the default keeps guests on this device.
+        public IAccountBackend Accounts { get; set; }
         public bool HasUnsavedChanges { get; private set; }
         public bool RecoveredFromBackup { get { return store.RecoveredFromBackup; } }
         public string SavePath { get { return store.FilePath; } }
@@ -40,63 +43,81 @@ namespace RhythmGame
             Config = config;
             this.store = store;
             progression = new ProgressionService(config, player);
+            Accounts = new LocalAccountBackend();
+        }
+
+        // Signs in (or back in) and saves the account with the rest of the player data.
+        public void SignIn(AccountProvider provider, Action<AccountResult> done)
+        {
+            Accounts.SignIn(provider, Account, result =>
+            {
+                if (result.Ok)
+                {
+                    Player.account = result.Account;
+                    SaveIfChanged(true);
+                    Accounts.Upload(Player, uploaded =>
+                    {
+                        if (uploaded) { Account.lastSyncedUtc = DateTime.UtcNow.ToString("o"); SaveIfChanged(true); }
+                    });
+                }
+                if (done != null) done(result);
+            });
+        }
+
+        // Back to the login screen; progress stays in the save for the next sign-in.
+        public void SignOut()
+        {
+            if (!Account.IsSignedIn) return;
+            Account.provider = AccountProvider.None;
+            SaveIfChanged(true);
         }
 
         public bool Purchase(string id) { return SaveIfChanged(progression.Purchase(id)); }
         public bool Upgrade(string id) { return SaveIfChanged(progression.Upgrade(id)); }
         public bool Equip(string id) { return SaveIfChanged(progression.Equip(id)); }
         public bool AddDrumsticks(long amount) { return SaveIfChanged(progression.AddDrumsticks(amount)); }
-        public bool DiscoverFish(string species) { return SaveIfChanged(Player.DiscoverFish(species)); }
-        public bool DiscoverMochi(string kind) { return SaveIfChanged(Player.DiscoverMochi(kind)); }
-
-        // Keeps the longest echoed phrase. The shared record still stores stage and time.
-        public bool RememberEchoBeats(int beats)
+        public MiniGameResult RecordMiniGame(string gameId, double seconds, int stage, bool cleared, bool earnsDrumsticks = true, long? earned = null)
         {
-            if (beats < 1) return false;
-            MiniGameRecord record = Player.FindMiniGame("echo");
-            if (record == null || beats <= record.bestBeats) return false;
+            MiniGameResult result = progression.RecordMiniGame(gameId, seconds, stage, cleared, earnsDrumsticks, earned);
+            SaveIfChanged(true);
+            return result;
+        }
+
+        public bool DiscoverFish(string id) { return SaveIfChanged(Player.DiscoverFish(id)); }
+        public bool DiscoverMochi(string id) { return SaveIfChanged(Player.DiscoverMochi(id)); }
+
+        public void RememberEchoBeats(int beats)
+        {
+            MiniGameRecord record = Player.EnsureMiniGame("echo");
+            if (beats <= record.bestBeats) return;
             record.bestBeats = beats;
-            return SaveIfChanged(true);
+            SaveIfChanged(true);
         }
 
-        // Highest Tapping Beat stage the player has opened. The menu shows this with the longest time.
-        public bool RememberEchoStage(int stage)
+        public void RememberEchoStage(int stage)
         {
-            if (stage < 1 || stage > 3) return false;
-            MiniGameRecord record = Player.FindMiniGame("echo");
-            if (record == null || stage <= record.echoStage) return false;
+            MiniGameRecord record = Player.EnsureMiniGame("echo");
+            stage = Math.Max(0, Math.Min(3, stage));
+            if (stage <= record.echoStage) return;
             record.echoStage = stage;
-            return SaveIfChanged(true);
+            SaveIfChanged(true);
         }
 
-        // One tortoise-race win. The next race uses the course and shell this count unlocks.
         public int RememberRaceWin()
         {
-            MiniGameRecord record = Player.FindMiniGame("race");
-            if (record == null) return 0;
+            MiniGameRecord record = Player.EnsureMiniGame("race");
             record.raceWins++;
             SaveIfChanged(true);
             return record.raceWins;
         }
 
-        // Furthest Wall Breaker distance. No-ops until the shared record exists, and never shortens it.
-        public int RememberWallDistance(int meters)
+        public void RememberWallDistance(int meters)
         {
-            if (meters < 0) return 0;
-            MiniGameRecord record = Player.FindMiniGame("wall");
-            if (record == null) return 0;
-            if (meters > record.wallMeters)
-            {
-                record.wallMeters = meters;
-                SaveIfChanged(true);
-            }
-            return record.wallMeters;
-        }
-        public MiniGameResult RecordMiniGame(string gameId, double seconds, int stage, bool cleared)
-        {
-            MiniGameResult result = progression.RecordMiniGame(gameId, seconds, stage, cleared);
+            if (meters < 0) return;
+            MiniGameRecord record = Player.EnsureMiniGame("wall");
+            if (meters <= record.wallMeters) return;
+            record.wallMeters = meters;
             SaveIfChanged(true);
-            return result;
         }
         public bool SetLanguage(GameLanguage language) { return NotifySettings(SaveIfChanged(progression.SetLanguage(language))); }
         public bool SetVolumes(float master, float music, float soundEffects)
@@ -123,12 +144,20 @@ namespace RhythmGame
         {
             return SaveIfChanged(progression.SetBluetoothCompensation(enabled, ms));
         }
+        public bool SetPadOffset(bool bluetoothAudio, double ms)
+        {
+            PlayerSettings.ValidatePadOffset(ms);
+            ms = Math.Round(ms);
+            if (Settings.PadOffsetMs(bluetoothAudio) == ms) return false;
+            if (bluetoothAudio) Settings.padOffsetBluetoothAudioMs = ms; else Settings.padOffsetMs = ms;
+            return SaveIfChanged(true);
+        }
         public PlaySession BeginPlay(string chartId) { return progression.BeginPlay(chartId); }
         public void Abort(PlaySession session) { progression.Abort(session); }
 
-        public PlayResult Complete(PlaySession session)
+        public PlayResult Complete(PlaySession session, bool earnsCoins = true)
         {
-            PlayResult result = progression.Complete(session);
+            PlayResult result = progression.Complete(session, earnsCoins);
             SaveIfChanged(true);
             return result;
         }

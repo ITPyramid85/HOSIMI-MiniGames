@@ -47,7 +47,7 @@ namespace RhythmGame.Editor
                     line.raycastTarget = false;
                 }
             }
-            Button pad = RowButton(c, frame, "PadButton", RowY(0), Palette.Well);
+            Button pad = RowButton(c, frame, "PadButton", RowY(0), Palette.Blue);
             Slider music = Slider("MusicSlider", c, frame, solid, new Vector2(72, RowY(1)), 432);
             Text musicValue = Text("MusicValue", c, "100%", 312, RowY(1), 96, 40, 24, Palette.Ink);
             musicValue.alignment = TextAnchor.MiddleRight;
@@ -61,17 +61,21 @@ namespace RhythmGame.Editor
                 languages[i] = PixelMenuBuilder.PixelButton("Language_" + code, c, frame, code, new Vector2(-128 + i * 152, RowY(3)),
                     new Vector2(144, 48), Palette.Well, Palette.Ink, 20);
             }
-            Button google = RowButton(c, frame, "GoogleButton", RowY(4), Palette.Well);
+            // Client reply v6 §3-5: the account row has Google and Apple sign-in and account deletion.
+            Button google = PixelMenuBuilder.PixelButton("GoogleButton", c, frame, "", new Vector2(-64, RowY(4)), new Vector2(176, 48), Palette.Well, Palette.Ink, 20);
+            Button apple = PixelMenuBuilder.PixelButton("AppleButton", c, frame, "", new Vector2(120, RowY(4)), new Vector2(176, 48), Palette.Ink, Palette.Panel, 20);
+            Button deleteAccount = PixelMenuBuilder.PixelButton("DeleteAccountButton", c, frame, "", new Vector2(320, RowY(4)), new Vector2(176, 48), Palette.Well, Palette.DangerText, 20);
             Button latency = RowButton(c, frame, "LatencyButton", RowY(5), Palette.Blue);
             Button inquiry = RowButton(c, frame, "InquiryButton", RowY(6), Palette.Well);
             Text status = Text("Status", c, "", Left, -296, 816, 32, 20, Palette.MintText);
             status.alignment = TextAnchor.MiddleCenter;
 
-            PixelMenuBuilder.Assign(popup, "closeButton", close, "padButton", pad, "googleButton", google, "latencyButton", latency,
+            PixelMenuBuilder.Assign(popup, "closeButton", close, "padButton", pad, "googleButton", google, "appleButton", apple, "deleteAccountButton", deleteAccount, "latencyButton", latency,
                 "inquiryButton", inquiry, "musicSlider", music, "effectsSlider", effects,
                 "title", title, "padLabel", labels["Pad"], "musicLabel", labels["Music"], "effectsLabel", labels["Effects"],
                 "languageLabel", labels["Language"], "googleLabel", labels["Google"], "latencyLabel", labels["Latency"],
                 "inquiryLabel", labels["Inquiry"], "musicValue", musicValue, "effectsValue", effectsValue, "status", status,
+                "padTestPrefab", AssetDatabase.LoadAssetAtPath<GameObject>(PadTestBuilder.PrefabPath).GetComponent<PadTestPopup>(),
                 "latencyPrefab", AssetDatabase.LoadAssetAtPath<GameObject>(MainMenuBuilder.LatencyPath).GetComponent<LatencyCalibrationPopup>());
             PixelMenuBuilder.AssignArray(popup, "languageButtons", languages);
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root.gameObject, PrefabPath);

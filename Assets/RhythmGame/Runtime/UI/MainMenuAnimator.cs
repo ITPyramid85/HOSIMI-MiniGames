@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 namespace RhythmGame
 {
-    // Main menu motion: a pixel-blind reveal and staggered entrances, then idle loops locked to the
-    // menu BGM's beat (client reply v5 §4-3): the beat bars jump and the guide character bobs on it.
+    // Main menu motion: staggered entrances, then idle loops locked to the menu BGM's beat
+    // (client reply v5 §4-3): the beat bars jump and the guide character bobs on it.
     // Purely presentational: buttons stay clickable during every animation.
     public sealed class MainMenuAnimator : MonoBehaviour
     {
@@ -31,6 +31,7 @@ namespace RhythmGame
             guideBase = guide.anchoredPosition;
             buttonBase = Array.ConvertAll(buttons, b => b.anchoredPosition);
             barHeights = Array.ConvertAll(beatBars, b => b.sizeDelta.y);
+            HideWipe();
         }
 
         private void Start() { StartCoroutine(Intro()); }
@@ -38,7 +39,6 @@ namespace RhythmGame
         private IEnumerator Intro()
         {
             introStarted = Time.unscaledTime;
-            StartCoroutine(PixelTween.Blinds(this, wipeBars, false));
             StartCoroutine(PixelTween.Move(logo, logoBase + new Vector2(0, 160), logoBase, .6f, PixelTween.OutBounce, .1f));
             StartCoroutine(PixelTween.Move(guide, guideBase - new Vector2(0, 260), guideBase, .6f, PixelTween.OutBack, .25f));
             StartCoroutine(PixelTween.Punch(bubble, .2f, .3f));
@@ -52,13 +52,15 @@ namespace RhythmGame
         {
             if (exiting) return;
             exiting = true;
-            StartCoroutine(Exit(done));
+            HideWipe();
+            if (done != null) done();
         }
 
-        private IEnumerator Exit(Action done)
+        private void HideWipe()
         {
-            yield return PixelTween.Blinds(this, wipeBars, true);
-            done();
+            if (wipeBars == null) return;
+            foreach (RectTransform bar in wipeBars)
+                if (bar != null) bar.gameObject.SetActive(false);
         }
 
         // Beat phase from the music itself when it plays, so the bars stay on the BGM's beat.

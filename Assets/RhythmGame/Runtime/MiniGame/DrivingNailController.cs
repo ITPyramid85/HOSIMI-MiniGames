@@ -4,12 +4,13 @@ using UnityEngine;
 
 namespace RhythmGame
 {
-    // Five nails, one strike each. A bent nail is followed by the next one. Two seated nails light
-    // the chair, three the desk, and five the house.
+    // Nails for two minutes, one strike each, with no stage change. A bent nail is followed by the next one.
+    // Two seated light the chair, three the desk, and five the house.
+    // Lasting the two minutes clears; losing the hearts fails. Either way the result dialog opens.
     public sealed class DrivingNailController : MiniGameController
     {
         [SerializeField] private DrivingNailView view;
-        private int nailId = -1, hitsLeft, hitsTotal, seated, swings;
+        private int nailId = -1, hitsLeft, hitsTotal, seated, jobSeated, swings;
         private AudioClip impactClip;
         protected override bool PlaysJudgementAudio { get { return false; } }
 
@@ -20,9 +21,25 @@ namespace RhythmGame
         protected override double Bpm { get { return NailChart.Bpm; } }
         protected override double LeadSeconds { get { return BeatSeconds * 2; } }
         protected override int DefaultPad { get { return NailChart.Pad; } }
+        protected override RectTransform FlashTarget(int pad) { return view != null ? view.Hammer : null; }
         protected override bool AcceptsPad(int pad) { return pad == NailChart.Pad; }
         protected override int[] PadsFor(int stage) { return NailChart.Pads(stage); }
+        protected override double ClearAtSeconds { get { return NailChart.RunSeconds; } }
+        // The shared clock would print STAGE 2 at 45s and keep going. This game stays on one stage and ends at two minutes.
+        protected override int DisplayStage { get { return 1; } }
+        protected override int RecordedStage { get { return 1; } }
+        protected override int RewardStage { get { return 1; } }
+        protected override double StageProgress { get { return Math.Min(1, PlayedSeconds / NailChart.RunSeconds); } }
         protected override List<BeatCue> Generate(int seed) { return NailChart.Generate(seed); }
+        // Seated nails over every nail in the two minutes. Read before ClearField zeroes the counter.
+        protected override string ResultExtra
+        {
+            get
+            {
+                int total = Judge != null ? Judge.Cues.Count : 0;
+                return "\n" + Strings.T("minigame.drumsticks") + seated + "/" + total;
+            }
+        }
 
         protected override void Awake()
         {
@@ -31,7 +48,7 @@ namespace RhythmGame
             base.Awake();
         }
 
-        private void OnFieldTapped() { Press(NailChart.Pad); }
+        private void OnFieldTapped() { NoteScreenTouch(); Press(NailChart.Pad); }
 
         protected override void PresentCue(BeatCue cue, float secondsToBeat)
         {
@@ -52,25 +69,23 @@ namespace RhythmGame
                     {
                         view.Seat();
                         seated++;
-                        Grant(seated);
+                        jobSeated++;
+                        Grant(jobSeated);
                         int done = result.Cue.Variant;
                         Judge.Abandon(cue => cue.Variant == done);
-                        if (done >= NailChart.NailCount - 1) ShowFinished();
                     }
                     break;
                 case CueOutcome.Missed:
                     impactClip = MissClip;
-                    view.Bend(Strings.T("nails.bend"), hitsTotal);
                     hitsLeft = 0;
                     int ruined = result.Cue.Variant;
+                    // Bend this nail before the next one is armed. A deferred bend landed on the new nail,
+                    // and every miss after that copied the bent sprite onto the nail that followed.
+                    view.Bend(ruined, Strings.T("nails.bend"), hitsTotal);
                     BeatCue upcoming = NailChart.NextNail(Chart, ruined);
                     NailChart.PullForward(Chart, result.Cue, BeatSeconds);
                     Judge.Abandon(cue => cue.Variant == ruined);
-                    if (upcoming == null)
-                    {
-                        ShowFinished();
-                        return;
-                    }
+                    if (upcoming == null) return;
                     PresentFrom(upcoming);
                     BeginNail(upcoming);
                     break;
@@ -86,7 +101,7 @@ namespace RhythmGame
         protected override void ClearField()
         {
             nailId = -1;
-            hitsLeft = hitsTotal = seated = swings = 0;
+            hitsLeft = hitsTotal = seated = jobSeated = swings = 0;
             if (view == null) return;
             view.Clear();
             // The counter is on screen from the first moment, before the hammer rises.
@@ -98,22 +113,6 @@ namespace RhythmGame
             if (done == NailChart.ChairAt) view.Grant(NailChart.Piece.Chair);
             else if (done == NailChart.DeskAt) view.Grant(NailChart.Piece.Desk);
             else if (done == NailChart.HouseAt) view.Grant(NailChart.Piece.House);
-        }
-
-        // The dialog opens once every nail has been struck, not while the row is still growing.
-        private void ShowFinished()
-        {
-            // Seated nails are this job's stages: two is the chair, three the desk, five the house.
-            int stage = Math.Max(1, Math.Min(StageTable.Count, seated));
-            GameManager.EnsureInstance().Data.RecordMiniGame(GameId, PlayedSeconds, stage, seated >= NailChart.HouseAt);
-            string title = seated >= NailChart.HouseAt
-                ? Strings.T(NailChart.PieceKey(NailChart.Piece.House))
-                : Strings.T("nails.lose");
-            string body =
-                Strings.T("nails.played") + MiniGameController.Clock(PlayedSeconds) + "\n" +
-                Strings.T("nails.swung") + swings + "\n" +
-                Strings.T("nails.landed") + seated;
-            ShowRewardModal(title, body);
         }
 
         private void BeginNail(BeatCue cue)

@@ -32,12 +32,10 @@ namespace RhythmGame
         public double bestSeconds;
         public int plays;
         public long totalDrumsticks;
-        // Longest echoed phrase, and the highest Tapping Beat stage reached (1..3). Older saves leave both at 0.
+        // Optional extras. Missing values in an older save stay 0.
         public int bestBeats;
         public int echoStage;
-        // Tortoise-race wins. Older saves leave this at 0, which is the meadow and a plain shell.
         public int raceWins;
-        // Furthest distance reached in Wall Breaker. Older saves leave this at 0.
         public int wallMeters;
     }
 
@@ -54,33 +52,36 @@ namespace RhythmGame
         public List<ChartRecord> records = new List<ChartRecord>();
         // Optional: saves from before mini-games have none.
         public List<MiniGameRecord> miniGames = new List<MiniGameRecord>();
-        // Species ids caught in ice fishing. Missing on older saves.
+        // Optional catalogues. Saves from before these games leave them empty.
         public List<string> fishDex = new List<string>();
-        // Rice-cake kinds collected in mochi pounding. Missing on older saves.
         public List<string> mochiDex = new List<string>();
+        // Optional: saves from before the login screen are signed out and sign in as a guest.
+        public AccountInfo account = new AccountInfo();
 
         public OwnedCharacter FindCharacter(string id) { return characters.Find(c => c.characterId == id); }
         public ChartRecord FindRecord(string id) { return records.Find(r => r.chartId == id); }
-        public MiniGameRecord FindMiniGame(string id) { return miniGames.Find(r => r.gameId == id); }
+        public MiniGameRecord FindMiniGame(string id) { return miniGames == null ? null : miniGames.Find(r => r.gameId == id); }
 
-        // Records one ice-fishing species. A repeat catch stays a single dex entry.
-        public bool DiscoverFish(string species)
+        public MiniGameRecord EnsureMiniGame(string gameId)
         {
-            if (fishDex == null) fishDex = new List<string>();
-            if (string.IsNullOrEmpty(species) || Array.IndexOf(IceChart.Species, species) < 0)
-                throw new ArgumentException("Unknown fish.");
-            if (fishDex.Contains(species)) return false;
-            fishDex.Add(species);
-            return true;
+            if (miniGames == null) miniGames = new List<MiniGameRecord>();
+            MiniGameRecord record = FindMiniGame(gameId);
+            if (record == null) miniGames.Add(record = new MiniGameRecord { gameId = gameId, bestStage = 1 });
+            return record;
         }
 
-        // Records one rice-cake kind. Bean powder comes first. Rainbow is the last.
-        public bool DiscoverMochi(string kind)
+        // True only the first time this species is caught.
+        public bool DiscoverFish(string id) { return Discover(ref fishDex, id); }
+
+        // True only the first time this rice cake is seen.
+        public bool DiscoverMochi(string id) { return Discover(ref mochiDex, id); }
+
+        private static bool Discover(ref List<string> dex, string id)
         {
-            if (mochiDex == null) mochiDex = new List<string>();
-            if (kind != "bean" && kind != "rainbow") throw new ArgumentException("Unknown rice cake.");
-            if (mochiDex.Contains(kind)) return false;
-            mochiDex.Add(kind);
+            if (string.IsNullOrEmpty(id)) return false;
+            if (dex == null) dex = new List<string>();
+            if (dex.Contains(id)) return false;
+            dex.Add(id);
             return true;
         }
 
@@ -107,6 +108,15 @@ namespace RhythmGame
             equippedCharacterId = RenamedCharacter(equippedCharacterId);
         }
 
+        private static List<string> ValidDex(List<string> dex)
+        {
+            if (dex == null) return new List<string>();
+            var seen = new HashSet<string>();
+            foreach (string id in dex)
+                if (string.IsNullOrEmpty(id) || !seen.Add(id)) throw new InvalidOperationException("Invalid catalogue entry.");
+            return dex;
+        }
+
         private static string RenamedCharacter(string id)
         {
             return id == "steady" ? "whale" : id == "precise" ? "turtle" : id == "combo" ? "lion" : id;
@@ -118,23 +128,17 @@ namespace RhythmGame
                 !GameConfig.IsFinite(inputOffsetMs) || Math.Abs(inputOffsetMs) > config.rules.maxCalibrationMs)
                 throw new InvalidOperationException("Invalid or unsupported player save.");
             settings.Validate();
+            if (account == null) account = new AccountInfo();
+            account.Validate();
             if (miniGames == null) miniGames = new List<MiniGameRecord>();
-            if (fishDex == null) fishDex = new List<string>();
-            if (mochiDex == null) mochiDex = new List<string>();
-            var discovered = new HashSet<string>();
-            foreach (string species in fishDex)
-                if (string.IsNullOrEmpty(species) || !discovered.Add(species) || Array.IndexOf(IceChart.Species, species) < 0)
-                    throw new InvalidOperationException("Invalid fish dex.");
-            discovered.Clear();
-            foreach (string kind in mochiDex)
-                if ((kind != "bean" && kind != "rainbow") || !discovered.Add(kind))
-                    throw new InvalidOperationException("Invalid rice-cake collection.");
             var games = new HashSet<string>();
             foreach (MiniGameRecord g in miniGames)
                 if (g == null || string.IsNullOrEmpty(g.gameId) || !games.Add(g.gameId) || g.bestStage < 1 || g.bestStage > StageTable.Count ||
-                    !GameConfig.IsFinite(g.bestSeconds) || g.bestSeconds < 0 || g.plays < 0 || g.totalDrumsticks < 0 || g.bestBeats < 0 ||
-                    g.echoStage < 0 || g.echoStage > 3 || g.raceWins < 0 || g.wallMeters < 0)
+                    !GameConfig.IsFinite(g.bestSeconds) || g.bestSeconds < 0 || g.plays < 0 || g.totalDrumsticks < 0 ||
+                    g.bestBeats < 0 || g.echoStage < 0 || g.echoStage > 3 || g.raceWins < 0 || g.wallMeters < 0)
                     throw new InvalidOperationException("Invalid mini-game record.");
+            fishDex = ValidDex(fishDex);
+            mochiDex = ValidDex(mochiDex);
             var ids = new HashSet<string>();
             foreach (OwnedCharacter c in characters)
             {

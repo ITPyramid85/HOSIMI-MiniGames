@@ -4,8 +4,8 @@ using System.Collections.Generic;
 namespace RhythmGame
 {
     // Plan §4-01 rice-cake pounding: Grandma flips the rice cake at irregular intervals; strike pad 8
-    // (tom 3) on each flip. The whole game is about one minute, then the clear dialog opens. The lift
-    // stays lenient. Rainbow rice cakes are bonus.
+    // (tom 3) on each flip. Surviving the whole 8 minutes opens the clear dialog. Level 1's lift stays
+    // lenient and later levels quicken on Mochi's own ladder. Rainbow rice cakes are bonus.
     // The shared countdown is beats 0..3 (3, 2, 1, GO). The next two beats are only for listening.
     // The first flip, and the first beat that can be judged, is the third beat after GO.
     public static class MochiChart
@@ -13,7 +13,7 @@ namespace RhythmGame
         public const double Bpm = 120;
         public const int PrepBeats = 2;
         public const int Pad = 7;   // pad 8, tom 3
-        public const double RunSeconds = 60;
+        public const double RunSeconds = StageTable.ClearSeconds;
         public const double LevelOneSeconds = 150;
         // Level 1's window covers the whole slow lift, so a strike while the cake is coming up still lands.
         // Later stages narrow, but each one stays wider than the stage after it.
@@ -21,7 +21,7 @@ namespace RhythmGame
         private static readonly double[] Good = { 900, 720, 580, 460, 360, 280, 220, 170, 130, 100 };
         // Level 1 holds for 2:30. Later stages keep a gentler climb than the shared clock.
         private static readonly double[] Starts = { 0, 150, 185, 220, 260, 305, 370, 405, 435, 455 };
-        // Gaps in beats. The one-minute run uses the first row, a little quicker than a 3-second lift.
+        // Gaps in beats per level. Level 1 is a little quicker than a 3-second lift.
         private static readonly double[][] Gaps = {
             new[] { 5, 4.5, 4 }, new double[] { 5, 4, 4 }, new[] { 4, 3.5, 3 }, new[] { 3, 2.5, 2 }, new[] { 2.5, 2, 1.5 },
             new[] { 2, 1.5, 1 }, new[] { 1.5, 1, .5 }, new[] { 1, .5, .5 }, new[] { .5, 1, .5 }, new[] { .5, .5, .5 } };
@@ -69,7 +69,7 @@ namespace RhythmGame
             double time = FirstCue, last = RunSeconds - 1;
             while (time <= last + 1e-9)
             {
-                Stage stage = StageOf(1);
+                Stage stage = StageAt(time);
                 int i = stage.Number - 1;
                 double roll = random.NextDouble();
                 CueKind kind = roll < FeintChance[i] ? CueKind.Forbidden : roll < FeintChance[i] + RainbowChance ? CueKind.Bonus : CueKind.Normal;

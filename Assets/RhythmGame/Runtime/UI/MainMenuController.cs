@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace RhythmGame
@@ -26,7 +25,6 @@ namespace RhythmGame
         private CharacterPopup characterInstance;
         private Button popupOpener;
         private bool loading;
-        private MainMenuAnimator animator;
         private Coroutine typing;
         private bool PopupOpen { get { return (settingsInstance != null && settingsInstance.IsOpen) ||
             (characterInstance != null && characterInstance.IsOpen); } }
@@ -34,7 +32,6 @@ namespace RhythmGame
         private void Awake()
         {
             GameManager.EnsureInstance();
-            animator = GetComponent<MainMenuAnimator>();
             lessonButton.onClick.AddListener(ComingSoon);
             startButton.onClick.AddListener(StartGame);
             miniGamesButton.onClick.AddListener(OpenMiniGames);
@@ -159,8 +156,7 @@ namespace RhythmGame
             if (loading || PopupOpen || !GameManager.Instance.IsReady) return;
             loading = true;
             menuGroup.interactable = false;
-            if (animator != null) animator.PlayExit(() => SceneManager.LoadSceneAsync(scene));
-            else SceneManager.LoadSceneAsync(scene);
+            SceneTransition.Load(scene);
         }
 
         private void OnDestroy()

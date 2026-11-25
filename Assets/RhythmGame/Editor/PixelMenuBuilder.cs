@@ -183,14 +183,13 @@ namespace RhythmGame.Editor
         internal static Sprite CreateArt()
         {
             Directory.CreateDirectory(ArtDir);
-            // 12x12 frame: 1px soft outline with notched corners and a bottom-right shade; the fill is FrameFill.
+            // 12x12 frame: three light steps on top, a mid body, three dark steps along the bottom.
             var frame = new Texture2D(12, 12, TextureFormat.RGBA32, false);
             for (int y = 0; y < 12; y++)
                 for (int x = 0; x < 12; x++)
                 {
-                    bool edge = x == 0 || y == 0 || x == 11 || y == 11;
                     bool corner = (x == 0 || x == 11) && (y == 0 || y == 11);
-                    float grey = edge ? .24f : (y == 1 || x == 10) ? .86f : FrameFill;
+                    float grey = corner ? 0f : PixelChrome.Tone(x, y, 12);
                     frame.SetPixel(x, y, corner ? Color.clear : new Color(grey, grey, grey, 1));
                 }
             WritePng(frame, FramePath);
@@ -312,7 +311,7 @@ namespace RhythmGame.Editor
         {
             Image image = Box(name, parent, new Color(Mathf.Min(1, fill.r / FrameFill), Mathf.Min(1, fill.g / FrameFill), Mathf.Min(1, fill.b / FrameFill)), frame);
             Place(image.rectTransform, position, size);
-            Shadow(image.gameObject, Palette.DropShadow, new Vector2(Px, -Px));
+            Shadow(image.gameObject, Palette.DropShadow, new Vector2(0f, -Px * 2f));
             Button button = image.gameObject.AddComponent<Button>();
             button.targetGraphic = image;
             ColorBlock colors = button.colors;

@@ -13,10 +13,13 @@ namespace RhythmGame.Tests
         }
 
         [Test]
-        public void SevenHeatsAndTheGlowShrinksEveryBlow()
+        public void SevenHeatsASwordAndTheGlowShrinksEveryBlow()
         {
-            List<BeatCue> cues = SmithChart.Generate(0);
-            Assert.AreEqual(SmithChart.HeatCount, cues.Count);
+            List<BeatCue> all = SmithChart.Generate(0);
+            Assert.Greater(all.Count, SmithChart.HeatCount * 10, "Sword after sword for the whole run.");
+            Assert.IsTrue(all.TrueForAll(c => c.Time < StageTable.ClearSeconds), "Every heat is inside the 8 minutes.");
+            Assert.Greater(all[all.Count - 1].Time, StageTable.ClearSeconds - 5);
+            List<BeatCue> cues = all.GetRange(0, SmithChart.HeatCount);
             Assert.AreEqual(SmithChart.FirstCue, cues[0].Time, .001);
             CollectionAssert.AreEqual(new[] { SmithChart.CrashPad, SmithChart.StackPad }, SmithChart.Pads(1));
             Assert.AreEqual(SmithChart.StackPad, cues[0].Pad, "Hammering blows are pad 2.");
@@ -29,6 +32,8 @@ namespace RhythmGame.Tests
                 Assert.Greater(cues[i].Time, cues[i - 1].Time);
                 Assert.AreEqual(i, cues[i].Variant);
             }
+            Assert.AreEqual(SmithChart.StackPad, all[SmithChart.HeatCount].Pad, "The next sword starts with the hammer.");
+            Assert.AreEqual(cues[0].GoodMs, all[SmithChart.HeatCount].GoodMs, "and a fresh, long glow.");
         }
 
         [Test]

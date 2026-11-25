@@ -20,9 +20,7 @@ namespace RhythmGame
         protected override double LeadSeconds { get { return MochiChart.StageOf(1).GoodMs / 1000.0; } }
         protected override int DisplayStage { get { return MochiChart.StageAt(PlayedSeconds).Number; } }
         protected override double StageProgress { get { return MochiChart.ProgressIn(PlayedSeconds); } }
-        protected override double ClearAtSeconds { get { return MochiChart.RunSeconds; } }
-        protected override int RewardStage { get { return 1; } }
-        protected override bool ScoresAt(double songTime) { return songTime + 1e-9 >= MochiChart.JudgementOpens; }
+        protected override int RewardStage { get { return MochiChart.StageAt(PlayedSeconds).Number; } }        protected override bool ScoresAt(double songTime) { return songTime + 1e-9 >= MochiChart.JudgementOpens; }
         protected override double LeadFor(BeatCue cue)
         {
             if (cue == null) return LeadSeconds;
@@ -37,6 +35,7 @@ namespace RhythmGame
             return lead < .2 ? .2 : lead;
         }
         protected override int DefaultPad { get { return MochiChart.Pad; } }
+        protected override RectTransform FlashTarget(int pad) { return view != null ? view.Mallet : null; }
         protected override bool AcceptsPad(int pad) { return pad == MochiChart.Pad; }
         protected override int[] PadsFor(int stage) { return MochiChart.Pads(stage); }
         protected override List<BeatCue> Generate(int seed) { return MochiChart.Generate(seed); }
@@ -47,7 +46,7 @@ namespace RhythmGame
             base.Awake();
         }
 
-        private void OnFieldTapped() { Press(MochiChart.Pad); }
+        private void OnFieldTapped() { NoteScreenTouch(); Press(MochiChart.Pad); }
 
         // The mallet comes down on every strike, so a swing into an empty mortar still reads as a swing.
         protected override void OnAcceptedPad(int pad)

@@ -13,12 +13,12 @@ namespace RhythmGame
         [SerializeField] private AudioClip foot, tom, snare, wake, whistle, trumpet, nyah;
         private int steps, course, raceStage = 1;
         private double clockOrigin, sprintAt = double.PositiveInfinity;
-        private bool won, closeLoss, ended, asleep, sprinted;
+        private bool closeLoss, ended, asleep, sprinted;
 
         public override string GameId { get { return "race"; } }
         protected override string TitleKey { get { return "race.title"; } }
         protected override string[] PromptKeys { get { return new[] { "race.prompt_what", "race.prompt_when", "race.prompt_twist" }; } }
-        protected override string GameOverKey { get { return won ? "race.win" : closeLoss ? "race.close" : "race.lose"; } }
+        protected override string GameOverKey { get { return closeLoss ? "race.close" : "race.lose"; } }
         protected override double Bpm { get { return RaceChart.Bpm; } }
         protected override bool PlaysJudgementAudio { get { return false; } }
         protected override bool DeferGameOver { get { return true; } }
@@ -33,13 +33,14 @@ namespace RhythmGame
             return pad == RaceChart.LeftPad || pad == RaceChart.RightPad;
         }
 
+        protected override RectTransform FlashTarget(int pad) { return view != null ? view.Drum(pad) : null; }
+
         protected override List<BeatCue> Generate(int seed)
         {
             steps = 0;
             raceStage = 1;
             clockOrigin = 0;
             sprintAt = double.PositiveInfinity;
-            won = false;
             closeLoss = false;
             ended = false;
             asleep = false;
@@ -109,15 +110,8 @@ namespace RhythmGame
 
         protected override void OnRoundFinished(bool cleared)
         {
-            string line = Strings.T("race.steps") + steps + " / " + RaceChart.FinishSteps
-                + "   " + Strings.T(CourseKey(course));
-            if (won)
-            {
-                int wins = GameManager.EnsureInstance().Data.RememberRaceWin();
-                if (wins >= 1 && wins <= 3)
-                    line += "   " + Strings.T("race.unlocked") + Strings.T(CourseKey(wins));
-            }
-            AppendResult(line);
+            AppendResult(Strings.T("race.steps") + steps + " / " + RaceChart.FinishSteps
+                + "   " + Strings.T(CourseKey(course)));
         }
 
         private void Tick()
@@ -139,8 +133,9 @@ namespace RhythmGame
             }
             if (steps >= RaceChart.FinishSteps)
             {
-                if (raceStage < 2) { EnterStageTwo(); return; }
-                Win();
+                // Odd legs are a race's first course, even legs its purple second course.
+                if (raceStage % 2 == 1) { EnterStageTwo(); return; }
+                NextRace();
                 return;
             }
             if (rabbit >= RaceChart.FinishSteps - 0.001f || (Score != null && Score.IsOver)) Lose();
@@ -166,7 +161,7 @@ namespace RhythmGame
         // The turtle has crossed the line. Stage 1 is over; both runners go back for the purple course.
         private void EnterStageTwo()
         {
-            raceStage = 2;
+            raceStage++;
             steps = 0;
             asleep = false;
             sprinted = false;
@@ -189,22 +184,35 @@ namespace RhythmGame
             return SongTime - clockOrigin;
         }
 
-        private void Win()
+        // A won race is not the end of the run: the win is kept, and the next race starts on the course it unlocks.
+        private void NextRace()
         {
-            if (ended) return;
-            ended = true;
-            won = true;
+            int wins = GameManager.EnsureInstance().Data.RememberRaceWin();
+            course = RaceChart.Course(wins);
+            raceStage++;
+            steps = 0;
+            asleep = false;
+            sprinted = false;
+            sprintAt = double.PositiveInfinity;
+            clockOrigin = SongTime - RaceChart.GoAt + RaceChart.BeatSeconds;
             if (snore != null) snore.Stop();
             Play(trumpet);
-            if (view != null) view.Cheer();
-            StartCoroutine(EndSoon());
+            Play(whistle);
+            if (view != null)
+            {
+                view.ResetTrack();
+                view.SetCourse(course, RaceChart.Shell(wins));
+                view.CourseName(Strings.T(CourseKey(course)));
+                view.Cheer();
+            }
+            ReplaceChart(RaceChart.FromNow(SongTime));
         }
 
         private void Lose()
         {
             if (ended) return;
             ended = true;
-            won = false;
+//            won = false;
             closeLoss = RaceChart.CloseLoss(steps);
             if (snore != null) snore.Stop();
             if (closeLoss)

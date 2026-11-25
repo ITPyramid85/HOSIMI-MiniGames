@@ -12,8 +12,8 @@ namespace RhythmGame
     {
         [SerializeField] private SmithyView view;
         [SerializeField] private AudioClip crashSound;
-        private int heatId = -1, forged, blows, armedPad = SmithChart.StackPad;
-        private bool closing, sparked, shattered;
+        private int heatId = -1, forged, armedPad = SmithChart.StackPad;
+        private bool closing;
         private float finishAt = -1f;
 
         public override string GameId { get { return "smith"; } }
@@ -23,7 +23,7 @@ namespace RhythmGame
         protected override double Bpm { get { return SmithChart.Bpm; } }
         protected override double LeadSeconds { get { return BeatSeconds * 2; } }
         protected override int DefaultPad { get { return armedPad; } }
-        // A missed glow must not end the job. Only the seventh hammer blow does.
+        // The last heart, or a shattered bar, ends the run once the blow has played out. Surviving 8 minutes clears it.
         protected override bool DeferGameOver { get { return true; } }
         protected override bool AcceptsPad(int pad)
         {
@@ -31,6 +31,8 @@ namespace RhythmGame
             // Pad 2 is the hammer on every heat. Pad 1 is only the finishing blow.
             return pad == SmithChart.StackPad || pad == SmithChart.CrashPad;
         }
+
+        protected override RectTransform FlashTarget(int pad) { return view != null ? view.Hammer : null; }
         protected override int[] PadsFor(int stage) { return SmithChart.Pads(stage); }
         protected override List<BeatCue> Generate(int seed) { return SmithChart.Generate(seed); }
         protected override bool PlaysJudgementAudio { get { return false; } }
@@ -48,16 +50,9 @@ namespace RhythmGame
             if (view == null || closing) return;
             if (pad == SmithChart.CrashPad) view.FinishBlow();
             else if (pad == SmithChart.StackPad) view.Tap();
-            else return;
-            blows++;
-            if (blows >= SmithChart.HeatCount)
-            {
-                closing = true;
-                finishAt = Time.unscaledTime + .85f;
-            }
         }
 
-        private void OnFieldTapped() { if (!closing) Press(armedPad); }
+        private void OnFieldTapped() { NoteScreenTouch(); if (!closing) Press(armedPad); }
 
         protected override void Update()
         {
@@ -70,17 +65,28 @@ namespace RhythmGame
                     double time = SongTime;
                     // The diagram's "2" is also the number key. E is the same pad.
                     if (keyboard.digit2Key.wasPressedThisFrame || keyboard.numpad2Key.wasPressedThisFrame)
+                    {
+                        NotePadInput();
                         PressAt(SmithChart.StackPad, time);
+                    }
                     if (keyboard.digit1Key.wasPressedThisFrame || keyboard.numpad1Key.wasPressedThisFrame)
+                    {
+                        NotePadInput();
                         PressAt(SmithChart.CrashPad, time);
+                    }
                 }
             }
             base.Update();
             if (State != MiniGameState.Playing) return;
+            if (!closing && Score != null && Score.IsOver)
+            {
+                closing = true;
+                finishAt = Time.unscaledTime + .85f;
+            }
             if (closing && Time.unscaledTime >= finishAt)
             {
                 closing = false;
-                ShowFinished();
+                FinishRound();
             }
         }
 
@@ -88,6 +94,11 @@ namespace RhythmGame
         {
             if (closing || cue.Variant == heatId) return;
             heatId = cue.Variant;
+            if (cue.Variant > 0 && cue.Variant % SmithChart.HeatCount == 0)
+            {
+                forged = 0;
+                view.NewSword();
+            }
             armedPad = cue.Pad;
             view.Arm();
             view.ShowCall(cue.Pad == SmithChart.CrashPad);
@@ -102,7 +113,6 @@ namespace RhythmGame
                     forged++;
                     view.Forge(forged, result.Pad == SmithChart.CrashPad);
                     Play(result.Pad == SmithChart.CrashPad ? crashSound : StrikeClip);
-                    sparked = true;
                     break;
                 case CueOutcome.EmptyHit:
                     if (result.Pad != SmithChart.StackPad && result.Pad != SmithChart.CrashPad) return;
@@ -128,9 +138,9 @@ namespace RhythmGame
         protected override void ClearField()
         {
             heatId = -1;
-            forged = blows = 0;
+            forged = 0;
             armedPad = SmithChart.StackPad;
-            closing = sparked = shattered = false;
+            closing = false;
             finishAt = -1f;
             if (view != null) view.Clear();
         }
@@ -143,23 +153,12 @@ namespace RhythmGame
             return null;
         }
 
-        // The cooling blow threw the iron apart. Nothing is left on the anvil, so the job ends.
+        // The cooling blow threw the iron apart. Nothing is left on the anvil, so the run is lost.
         private void EndBecauseTheIronIsGone()
         {
-            shattered = true;
+            Score.Defeat();
             closing = true;
             if (finishAt < 0f) finishAt = Time.unscaledTime + .75f;
-        }
-
-        private void ShowFinished()
-        {
-            // Each successful heat is a stage. Seven, still in one piece, is the finished sword.
-            int stage = Mathf.Clamp(forged, 1, StageTable.Count);
-            GameManager.EnsureInstance().Data.RecordMiniGame(GameId, PlayedSeconds, stage, !shattered && forged >= SmithChart.LegendaryAt);
-            string title = shattered ? Strings.T("smith.shatter") : forged <= 0 ? Strings.T("smith.lose") : Strings.T(SmithChart.StageKey(forged));
-            string body = Strings.T("minigame.time") + Clock(PlayedSeconds) + "\n" + title;
-            if (sparked) body += "\n" + Strings.T("smith.spark");
-            ShowRewardModal(title, body);
         }
 
         protected override void OnDestroy()
@@ -248,6 +247,7 @@ namespace RhythmGame
             public void OnPointerDown(PointerEventData eventData)
             {
                 if (eventData.button != PointerEventData.InputButton.Left || owner == null) return;
+                owner.NoteScreenTouch();
                 owner.Press(pad);
             }
         }

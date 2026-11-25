@@ -86,6 +86,8 @@ namespace RhythmGame
             Drive(SongTime);
         }
 
+        protected override RectTransform FlashTarget(int pad) { return view != null ? view.Drum(pad) : null; }
+
         protected override void PresentCue(BeatCue cue, float secondsToBeat) { }
 
         protected override void ShowOutcome(CueResult result)
@@ -113,9 +115,13 @@ namespace RhythmGame
         // A drum on the screen. Keys come through Update.
         public void Echo(int pad)
         {
-            if (State != MiniGameState.Playing || phase != Phase.Answer) return;
-            // X has no drum in this kit, so its key is not an answer at all.
-            if (System.Array.IndexOf(EchoChart.AllPads, pad) < 0) return;
+            if (State != MiniGameState.Playing) return;
+            // X has no drum in this kit, and a tap while the rival is playing is not an answer.
+            if (phase != Phase.Answer || System.Array.IndexOf(EchoChart.AllPads, pad) < 0)
+            {
+                FlashPad(pad, PadFlashPool.Kind.Miss);
+                return;
+            }
             Resolve(pad, SongTime);
         }
 
@@ -124,7 +130,7 @@ namespace RhythmGame
             Keyboard keyboard = Keyboard.current;
             if (keyboard == null) return;
             for (int pad = 0; pad < Keys.Length; pad++)
-                if (keyboard[Keys[pad]].wasPressedThisFrame) Echo(pad);
+                if (keyboard[Keys[pad]].wasPressedThisFrame) { NotePadInput(); Echo(pad); }
         }
 
         private void Drive(double time)
@@ -171,7 +177,7 @@ namespace RhythmGame
                 memory.Fail();
             }
             else
-                memory.Use(EchoChart.Phrase(seed, Step.Number, memory.Length + 1, ++draw));
+                memory.Use(EchoChart.Phrase(seed, Step.Number, System.Math.Min(memory.Length + 1, Step.EndLength), ++draw));
             BeginListen();
         }
 
@@ -179,7 +185,7 @@ namespace RhythmGame
         private void Resolve(int pad, double time)
         {
             bool grown;
-            if (!memory.Answer(pad, out grown)) { Fail(); return; }
+            if (!memory.Answer(pad, out grown)) { FlashPad(pad, PadFlashPool.Kind.Miss); Fail(); return; }
             if (view != null) view.Strike(pad);
             Play(Clip(pad));
             double offset = time - expect;
@@ -207,8 +213,9 @@ namespace RhythmGame
             failed = false;
             nextTime = time + .7;
             if (!StageDone) return;
-            // The stage is cleared. Either the next one opens its pads, or that was the whole game.
-            if (LastStage) { Stop(1.1f); return; }
+            // The stage is cleared. The next one opens its pads; past the last, its longest phrases keep coming
+            // until the 8 minutes are up.
+            if (LastStage) return;
             advancing = true;
             nextTime = time + 1.9;
             if (view != null) view.Announce(Step.Number + 1);

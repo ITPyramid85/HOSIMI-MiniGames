@@ -60,6 +60,7 @@ namespace RhythmGame
             Instance = this;
             transform.SetParent(null);
             DontDestroyOnLoad(gameObject);
+            if (GetComponent<DrumInput>() == null) gameObject.AddComponent<DrumInput>();
             if (Data != null || InitializationError != null) return;
             try { Data = RhythmGameData.Open(); }
             catch (Exception e)

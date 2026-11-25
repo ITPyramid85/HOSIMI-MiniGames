@@ -14,6 +14,7 @@ namespace RhythmGame
         private int wallId = -1, previewed = -1, got, needHits, creeps;
         private bool failed, ended;
         private float musicLoud = 1f;
+        private double heardOffset;
         private Coroutine pending;
 
         public override string GameId { get { return "wall"; } }
@@ -25,6 +26,8 @@ namespace RhythmGame
         protected override bool DeferGameOver { get { return true; } }
         protected override double LeadSeconds { get { return 0.5; } }
         protected override int[] PadsFor(int stage) { return WallChart.Pads; }
+
+        protected override RectTransform FlashTarget(int pad) { return view != null ? view.Drum(pad) : null; }
 
         protected override bool AcceptsPad(int pad)
         {
@@ -115,8 +118,13 @@ namespace RhythmGame
             int wall = cue.Variant / 10;
             if (wall < previewed) return;
             if (failed && wall == wallId) return;
+            heardOffset = SongTime - (cue.Time - secondsToBeat);
             ShowUpcoming(cue);
-            if (view != null) view.Crack(secondsToBeat);
+            if (view != null)
+            {
+                view.Crack(secondsToBeat);
+                view.Pulse(cue.Pad, secondsToBeat);
+            }
         }
 
         protected override void OnAcceptedPad(int pad)
@@ -126,12 +134,39 @@ namespace RhythmGame
         }
 
         // Leftover beats of a wall that already failed must not cost another life.
+        // A strike on the lit drum is that beat's hit: the drum lights LeadSeconds before the beat,
+        // which is earlier than the stage window opens, and stays lit until the window closes.
         protected override CueResult Reinterpret(CueResult result)
         {
             if (result == null) return result;
             bool spent = failed && result.Cue != null && result.Cue.Variant / 10 == wallId;
-            if (ended || spent) result.Outcome = CueOutcome.ForbiddenAvoided;
-            return result;
+            if (ended || spent) { result.Outcome = CueOutcome.ForbiddenAvoided; return result; }
+            if (result.Outcome != CueOutcome.EmptyHit || Judge == null) return result;
+            BeatCue lit = LitCue(result.Pad);
+            if (lit == null) return result;
+            Judge.Abandon(c => c == lit);
+            double offsetMs = (SongTime - heardOffset - lit.Time) * 1000;
+            double perfect = lit.PerfectMs > 0 ? lit.PerfectMs : 80;
+            return new CueResult
+            {
+                Cue = lit, Pad = result.Pad, Outcome = CueOutcome.Hit,
+                Grade = System.Math.Abs(offsetMs) <= perfect ? HitGrade.Perfect : HitGrade.Good,
+                OffsetMs = offsetMs
+            };
+        }
+
+        private BeatCue LitCue(int pad)
+        {
+            double heard = SongTime - heardOffset;
+            foreach (BeatCue cue in Judge.Cues)
+            {
+                if (Judge.IsResolved(cue) || cue.Kind == CueKind.Forbidden) continue;
+                if (cue.Time - LeadSeconds - 1e-6 > heard) return null;
+                if (cue.Pad != pad || (failed && cue.Variant / 10 == wallId)) continue;
+                double good = cue.GoodMs > 0 ? cue.GoodMs / 1000 : Judge.GoodWindowSeconds;
+                if (heard <= cue.Time + good) return cue;
+            }
+            return null;
         }
 
         protected override void ShowOutcome(CueResult result)

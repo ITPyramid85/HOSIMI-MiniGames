@@ -23,7 +23,7 @@ namespace RhythmGame
         private int shown = -1, stacked, restPad = IceChart.Center, nextSide = IceChart.Right;
         private const float RestSeconds = .6f;
         private static float HalfBeat { get { return (float)(IceChart.BeatSeconds * .5); } }
-        private Coroutine swing, blow, step;
+        private Coroutine swing, blow, step, plunge;
         private float settledUntil;
         public event Action<int> Pressed;
 
@@ -50,7 +50,7 @@ namespace RhythmGame
         public void Clear(bool[] known)
         {
             if (swinging()) StopAllCoroutines();
-            swing = blow = step = null;
+            swing = blow = step = plunge = null;
             shown = -1;
             stacked = 0;
             restPad = IceChart.Center;
@@ -214,14 +214,52 @@ namespace RhythmGame
             yield return Wander();
         }
 
-        public void Fall(int pad)
+        // rise: he shivers in the water and climbs back out while the fish keeps swimming.
+        // Otherwise he stays in, and the fish stops with the run.
+        public void Fall(int pad, bool rise)
         {
-            if (swing != null) StopCoroutine(swing);
-            swing = null;
+            if (!rise)
+            {
+                if (swing != null) StopCoroutine(swing);
+                swing = null;
+            }
             if (step != null) StopCoroutine(step);
             step = null;
+            if (plunge != null) StopCoroutine(plunge);
             if (fisherImage != null && fisherWet != null) fisherImage.sprite = fisherWet;
-            StartCoroutine(Drop(Hole(pad)));
+            plunge = StartCoroutine(rise ? FallAndClimb(Hole(pad)) : Drop(Hole(pad)));
+        }
+
+        // He climbs out onto the ice he broke, where the hammer is, not back to where his step began.
+        private IEnumerator FallAndClimb(RectTransform hole)
+        {
+            Vector2 back = hole != null ? Stand(hole) : fisher.anchoredPosition;
+            yield return Drop(hole);
+            Vector2 into = fisher.anchoredPosition;
+            float start = Time.unscaledTime;
+            while (Time.unscaledTime < start + .6f)
+            {
+                float t = Time.unscaledTime - start;
+                fisher.anchoredPosition = into + new Vector2(Mathf.Sin(t * 70f) * 6f, 0f);
+                yield return null;
+            }
+            fisher.anchoredPosition = into;
+            if (splash != null) splash.gameObject.SetActive(false);
+            start = Time.unscaledTime;
+            while (Time.unscaledTime < start + .35f)
+            {
+                float t = PixelTween.OutCubic(Mathf.InverseLerp(start, start + .35f, Time.unscaledTime));
+                fisher.anchoredPosition = Vector2.Lerp(into, back, t);
+                yield return null;
+            }
+            fisher.anchoredPosition = back;
+            if (hammer != null && blow == null && hole != null)
+            {
+                hammer.anchoredPosition = Above(hole);
+                SetHammer(Raised);
+            }
+            if (fisherImage != null && fisherIdle != null) fisherImage.sprite = fisherIdle;
+            plunge = null;
         }
 
         private void SetCaught(int count)
@@ -231,7 +269,7 @@ namespace RhythmGame
 
         public int ShownVariant { get { return shown; } }
 
-        // Only the ice the fish is actually over. Any other ice is empty, and breaking it ends the run.
+        // Only the ice the fish is actually over. Any other ice is empty, and breaking it drops the fisher in.
         public bool FishAt(int pad)
         {
             if (fish == null || !fish.gameObject.activeSelf) return false;
@@ -241,6 +279,8 @@ namespace RhythmGame
             return Mathf.Abs(delta.x) <= hole.sizeDelta.x * .5f && Mathf.Abs(delta.y) <= hole.sizeDelta.y * .5f;
         }
 
+        public RectTransform HoleRect(int pad) { return Hole(pad); }
+
         private RectTransform Hole(int pad)
         {
             int index = IceChart.HoleIndex(pad);
@@ -248,13 +288,13 @@ namespace RhythmGame
             return holes[index];
         }
 
-        private bool swinging() { return swing != null || blow != null || step != null; }
+        private bool swinging() { return swing != null || blow != null || step != null || plunge != null; }
 
         private IEnumerator StepTo(RectTransform hole)
         {
             if (fisher == null || hole == null) yield break;
             Vector2 from = fisher.anchoredPosition;
-            Vector2 to = new Vector2(hole.anchoredPosition.x, hole.anchoredPosition.y + hole.sizeDelta.y * .5f);
+            Vector2 to = Stand(hole);
             float start = Time.unscaledTime;
             while (Time.unscaledTime < start + .12f)
             {
@@ -264,6 +304,12 @@ namespace RhythmGame
             }
             fisher.anchoredPosition = to;
             step = null;
+        }
+
+        // Where the fisher stands to strike that ice.
+        private static Vector2 Stand(RectTransform hole)
+        {
+            return new Vector2(hole.anchoredPosition.x, hole.anchoredPosition.y + hole.sizeDelta.y * .5f);
         }
 
         // Pivot sits on the ice surface, to the right. Cocked, the head stays above the ice.

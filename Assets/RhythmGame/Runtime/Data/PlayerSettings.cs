@@ -17,6 +17,20 @@ namespace RhythmGame
         public bool bluetoothCompensationEnabled;
         public double bluetoothDelayMs;
         public const double MaxBluetoothDelayMs = 1000;
+        // Drum (G3003) delay measured by striking the pads: sound out + pad in, per audio route, because
+        // the drum's own Bluetooth speaker ("EDRUM") is far slower than the phone speaker. Optional v3
+        // fields: older saves read 0 = not measured.
+        public double padOffsetMs;
+        public double padOffsetBluetoothAudioMs;
+        public const double MinPadOffsetMs = -300, MaxPadOffsetMs = 1000;
+
+        public double PadOffsetMs(bool bluetoothAudio) { return bluetoothAudio ? padOffsetBluetoothAudioMs : padOffsetMs; }
+
+        public static void ValidatePadOffset(double value)
+        {
+            if (double.IsNaN(value) || double.IsInfinity(value) || value < MinPadOffsetMs || value > MaxPadOffsetMs)
+                throw new ArgumentOutOfRangeException("padOffsetMs");
+        }
 
         public double BluetoothCompensationMs(bool bluetoothOutput)
         {
@@ -70,6 +84,8 @@ namespace RhythmGame
             ValidateVolume(musicVolume);
             ValidateVolume(soundEffectsVolume);
             ValidateBluetoothDelay(bluetoothDelayMs);
+            ValidatePadOffset(padOffsetMs);
+            ValidatePadOffset(padOffsetBluetoothAudioMs);
         }
     }
 }

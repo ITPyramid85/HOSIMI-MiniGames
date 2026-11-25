@@ -21,8 +21,10 @@ namespace RhythmGame.Tests
             Assert.AreEqual(4, IceChart.Center, "Pad 5 is the middle ice.");
             Assert.AreEqual(7, IceChart.Right, "Pad 8 is the right ice.");
             Assert.IsTrue(cues.TrueForAll(c => c.Pad == IceChart.Left || c.Pad == IceChart.Center || c.Pad == IceChart.Right));
-            int feints = cues.FindAll(c => c.Kind == CueKind.Forbidden).Count;
-            Assert.AreEqual(2, feints, "Two fish pretend to stop.");
+            int feints = cues.FindAll(c => c.Kind == CueKind.Forbidden && IceChart.FishOf(c.Variant) < 8).Count;
+            Assert.AreEqual(2, feints, "Two of each school of eight pretend to stop.");
+            Assert.IsTrue(cues.TrueForAll(c => c.Time < IceChart.RunSeconds), "Every fish is inside the two minutes.");
+            Assert.Greater(cues[cues.Count - 1].Time, IceChart.RunSeconds - 5, "Fish keep coming to the end.");
             var big = new HashSet<int>();
             foreach (BeatCue cue in cues)
             {

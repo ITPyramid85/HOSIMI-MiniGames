@@ -96,17 +96,21 @@ namespace RhythmGame.Tests
         }
 
         [UnityTest]
-        public IEnumerator BluetoothCalibrationOpensOnTopAndReturnsToSettings()
+        public IEnumerator DrumTestOpensOnTopAndReturnsToSettings()
         {
             SettingsPopup popup = Open();
-            Card(popup, "LatencyButton").GetComponent<Button>().onClick.Invoke();
-            Assert.IsTrue(popup.LatencyOpen);
-            LatencyCalibrationPopup latency = menu.GetComponentInChildren<LatencyCalibrationPopup>();
-            Assert.IsTrue(latency.IsOpen);
-            Assert.IsTrue(popup.IsOpen, "Settings stays underneath.");
-            latency.Close();
-            Assert.IsFalse(popup.LatencyOpen);
-            Assert.IsTrue(popup.IsOpen);
+            foreach (string row in new[] { "PadButton", "LatencyButton" })
+            {
+                Card(popup, row).GetComponent<Button>().onClick.Invoke();
+                Assert.IsTrue(popup.PadTestOpen, row);
+                PadTestPopup test = menu.GetComponentInChildren<PadTestPopup>();
+                Assert.IsTrue(test.IsOpen);
+                Assert.IsFalse(test.IsTesting, "No drum connected, so the latency row does not start calibrating.");
+                Assert.IsTrue(popup.IsOpen, "Settings stays underneath.");
+                test.Close();
+                Assert.IsFalse(popup.PadTestOpen);
+                Assert.IsTrue(popup.IsOpen);
+            }
             popup.Close();
             yield return null;
             CanvasGroup group = menu.transform.Find("Menu").GetComponent<CanvasGroup>();

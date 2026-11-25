@@ -3,10 +3,11 @@ using System.Collections.Generic;
 
 namespace RhythmGame
 {
-    // Eight fish pass under the ice. Later ones are faster. Big ones take two strikes. Some only pretend to stop.
+    // Fish pass under the ice for the whole two-minute run, the school of eight repeating. Later ones are
+    // faster. Big ones take two strikes. Some only pretend to stop.
     public static class IceChart
     {
-        public const double Bpm = 120, FirstCue = 2.5;
+        public const double Bpm = 120, FirstCue = 2.5, RunSeconds = 120;
         // Drum pads are numbered from 1. Pad 4 is the left ice, pad 5 the middle, pad 8 the right.
         public const int Left = 3, Center = 4, Right = 7, SpeciesCount = 6;
         public static readonly string[] Species = { "perch", "trout", "carp", "pike", "salmon", "char" };
@@ -18,8 +19,9 @@ namespace RhythmGame
 
         public static double BeatSeconds { get { return 60 / Bpm; } }
         public static bool IsBig(int species) { return species >= 3; }
-        public static int SpeciesOf(int variant) { return variant / 100; }
-        public static int FishOf(int variant) { return variant % 100; }
+        public static int SpeciesOf(int variant) { return variant / VariantSpan; }
+        public static int FishOf(int variant) { return variant % VariantSpan; }
+        private const int VariantSpan = 1000;
         public static string SpeciesId(int variant) { return Species[SpeciesOf(variant)]; }
         public static int[] Pads(int stage) { return new[] { Left, Center, Right }; }
 
@@ -34,16 +36,17 @@ namespace RhythmGame
         public static List<BeatCue> Generate(int seed)
         {
             var cues = new List<BeatCue>();
-            double time = FirstCue;
-            for (int fish = 0; fish < SpeciesPlan.Length; fish++)
+            double time = FirstCue, last = RunSeconds - 2;
+            for (int fish = 0; time <= last; fish++)
             {
-                int species = SpeciesPlan[fish];
+                int plan = fish % SpeciesPlan.Length;
+                int species = SpeciesPlan[plan];
                 int hole = Route[fish % Route.Length];
-                int variant = species * 100 + fish;
+                int variant = species * VariantSpan + fish;
                 // Half-window is 0.3s, so the fish's 0.6s stay is exactly the hittable time.
                 double good = 300;
                 double perfect = good * .45;
-                if (FeintPlan[fish])
+                if (FeintPlan[plan])
                     cues.Add(Cue(cues.Count, time, hole, CueKind.Forbidden, variant, perfect, good));
                 else if (IsBig(species))
                 {

@@ -7,8 +7,9 @@ namespace RhythmGame
     // a stone must not be hit. The axe turns gold after a streak of clean chops.
     public static class WoodChart
     {
-        public const double Bpm = 120, FirstCue = 2;
-        public const int Pad = 7, GoldAt = 2, GapBeats = 2;
+        public const double Bpm = 120, FirstCue = 2, RunSeconds = 120;
+        // The gap matches the controller's three-beat ride, so the next piece enters as the last one leaves the board.
+        public const int Pad = 7, GoldAt = 2, GapBeats = 3;
 
         public static double BeatSeconds { get { return 60 / Bpm; } }
         public static int[] Pads(int stage) { return new[] { Pad }; }
@@ -16,17 +17,16 @@ namespace RhythmGame
         public static List<BeatCue> Generate(int seed)
         {
             var random = new Random(seed);
-            double beat = BeatSeconds, last = StageTable.ClearSeconds - 2;
+            double beat = BeatSeconds, last = RunSeconds - 2;
+            Stage window = StageTable.Get(1);
             var cues = new List<BeatCue>();
             int piece = 0;
             for (double time = FirstCue; time <= last + 1e-9; piece++)
             {
-                Stage stage = StageTable.At(time);
                 int hits;
-                CueKind kind = Roll(random, stage.Number, out hits);
+                CueKind kind = Roll(random, window.Number, out hits);
                 for (int h = 0; h < hits; h++)
                 {
-                    Stage window = StageTable.At(time);
                     cues.Add(new BeatCue
                     {
                         Index = cues.Count, Time = time, Pad = Pad, Kind = kind, Variant = piece,

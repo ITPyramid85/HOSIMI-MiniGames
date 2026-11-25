@@ -98,11 +98,14 @@ namespace RhythmGame
         }
 
         // Settles one endless mini-game run: pays its drumsticks and keeps the best stage / longest time.
-        public MiniGameResult RecordMiniGame(string gameId, double seconds, int stageReached, bool cleared)
+        // earnsDrumsticks: false for touch play (client reply v6 §2-3: only play on the drum pays).
+        // earned, when set, is the amount for accurate play. A miss does not add to it.
+        public MiniGameResult RecordMiniGame(string gameId, double seconds, int stageReached, bool cleared, bool earnsDrumsticks = true, long? earned = null)
         {
             RequireIdle();
             if (string.IsNullOrEmpty(gameId) || !GameConfig.IsFinite(seconds)) throw new ArgumentException("Invalid mini-game result.");
-            long drumsticks = DrumstickReward.For(seconds, stageReached, cleared);
+            if (earned.HasValue && earned.Value < 0) throw new ArgumentOutOfRangeException("earned");
+            long drumsticks = !earnsDrumsticks ? 0 : earned ?? DrumstickReward.For(seconds, stageReached, cleared);
             MiniGameRecord record = Player.FindMiniGame(gameId);
             if (record == null) Player.miniGames.Add(record = new MiniGameRecord { gameId = gameId, bestStage = 1 });
             var result = new MiniGameResult { Seconds = seconds, Stage = stageReached, Cleared = cleared, Drumsticks = drumsticks,
@@ -154,14 +157,14 @@ namespace RhythmGame
                 throw new InvalidOperationException("Session is not active or was already settled.");
         }
 
-        public PlayResult Complete(PlaySession session)
+        public PlayResult Complete(PlaySession session, bool earnsCoins = true)
         {
             RequireActive(session);
             PlayResult result = session.BuildResult();
             ChartConfig chart = config.Chart(result.ChartId);
             ChartRecord record = Player.FindRecord(result.ChartId);
             EconomyConfig e = config.economy;
-            if (result.Cleared)
+            if (result.Cleared && earnsCoins)
             {
                 double ratio = e.minimumClearRewardRatio + (1 - e.minimumClearRewardRatio) * result.Accuracy;
                 result.BaseCoins = (long)Math.Floor((e.clearBaseCoins + (double)e.coinsPerDifficultyLevel * chart.difficultyLevel) * ratio);

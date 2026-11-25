@@ -79,7 +79,7 @@ PlayerSettings:
   androidFullscreenMode: 1
   androidAutoRotationBehavior: 1
   androidPredictiveBackSupport: 0
-  androidApplicationEntry: 2
+  androidApplicationEntry: 1
   defaultIsNativeResolution: 1
   macRetinaSupport: 1
   runInBackground: 0
@@ -256,7 +256,7 @@ PlayerSettings:
   templatePackageId: com.unity.template.universal-2d@5.0.2
   templateDefaultScene: Assets/Scenes/SampleScene.unity
   useCustomMainManifest: 0
-  useCustomLauncherManifest: 0
+  useCustomLauncherManifest: 1
   useCustomMainGradleTemplate: 0
   useCustomLauncherGradleManifest: 0
   useCustomBaseGradleTemplate: 0

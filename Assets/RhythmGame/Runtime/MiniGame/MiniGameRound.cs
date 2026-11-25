@@ -76,7 +76,7 @@ namespace RhythmGame
     public sealed class MiniGameScore
     {
         public const int PerfectPoints = 100, GoodPoints = 50, BonusFactor = 3, ForbiddenPenalty = 150;
-        public const int MaxLives = 5, ComboPerLife = 20, HalvesPerHeart = 2;
+        public const int MaxLives = 5, HalvesPerHeart = 2;
         public const int MaxHalves = MaxLives * HalvesPerHeart;
         public int Score { get; private set; }
         public int Combo { get; private set; }
@@ -92,7 +92,7 @@ namespace RhythmGame
         public MiniGameScore() { Halves = MaxHalves; }
 
         // Missing a cue or striking a forbidden one costs half a heart. An empty strike only breaks the combo.
-        // Every ComboPerLife hits in a row gives one heart back.
+        // Hits never give a heart back.
         public void Add(CueResult result)
         {
             switch (result.Outcome)
@@ -104,7 +104,6 @@ namespace RhythmGame
                     if (result.Grade == HitGrade.Perfect) Perfect++; else Good++;
                     Combo++;
                     MaxCombo = Math.Max(MaxCombo, Combo);
-                    if (Combo % ComboPerLife == 0 && Halves > 0) Halves = Math.Min(MaxHalves, Halves + HalvesPerHeart);
                     break;
                 case CueOutcome.Missed:
                     Miss++; Combo = 0; LoseHalf();
@@ -120,9 +119,10 @@ namespace RhythmGame
             }
         }
 
-        private void LoseHalf() { if (Halves > 0) Halves--; }
+        // Also for a penalty that is not a judged cue, such as falling through empty ice.
+        public void LoseHalf() { if (Halves > 0) Halves--; }
 
-        // Chopping a stone ends the wood run outright.
+        // Ends the run outright, whatever hearts are left.
         public void Defeat() { Halves = 0; }
     }
 }

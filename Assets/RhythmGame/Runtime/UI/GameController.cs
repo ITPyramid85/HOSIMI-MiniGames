@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace RhythmGame
@@ -35,12 +34,14 @@ namespace RhythmGame
         private bool settled, leaving;
         private readonly bool[] keyboardHeld = new bool[BeatmapData.PadCount];
         private float flashTime, judgementLife;
+        private PadFlashPool flashes;
+        private DrumstickHud sticks;
+        private bool screenTouch, padInput;
         private MiniGameGuide guide;
         private AudioLatencyMonitor latency;
         private double appliedOffsetMs;
         private bool musicNeedsSeek;
         private PopupTransition modalTransition;
-        private GameUIAnimator animator;
         public GameRunState State { get; private set; }
         public PlaySession Session { get; private set; }
         public PlayResult Result { get; private set; }
@@ -58,8 +59,14 @@ namespace RhythmGame
         private void Awake()
         {
             guide = GetComponentInChildren<MiniGameGuide>(true);
+            Canvas canvas = GetComponentInParent<Canvas>();
+            flashes = PadFlashPool.Create(canvas != null ? canvas.transform : transform);
+            if (scoreText != null) flashes.SetFont(scoreText.font);
+            sticks = DrumstickHud.Create(flashes, scoreText != null ? scoreText.font : null);
+            sticks.FollowScore(scoreText != null ? scoreText.rectTransform : null);
+            sticks.Awards(false);
+            sticks.Reset(Bank());
             modalTransition = PopupTransition.For(modal);
-            animator = GetComponent<GameUIAnimator>();
             primaryButton.onClick.AddListener(PrimaryAction);
             menuButton.onClick.AddListener(BackToMenu);
             pauseButton.onClick.AddListener(TogglePause);
@@ -73,6 +80,7 @@ namespace RhythmGame
                 GameManager manager = GameManager.EnsureInstance();
                 if (!manager.IsReady) throw new InvalidOperationException(manager.InitializationError);
                 data = manager.Data;
+                if (sticks != null) sticks.Reset(data.Player.coins);
                 latency = AudioLatencyMonitor.EnsureInstance();
                 latency.Changed += OnAudioOutputChanged;
                 ChartConfig chart = data.Config.Chart(chartId);
@@ -137,6 +145,9 @@ namespace RhythmGame
                 foreach (var pad in pads) pad.ResetFeedback();
                 judge.Judged += OnJudged;
                 ResetInput();
+                screenTouch = false;
+                padInput = false;
+                if (sticks != null) sticks.Reset(Bank());
                 anchor = AudioSettings.dspTime + 3;
                 frozenTime = -3;
                 music.Stop(); music.PlayScheduled(anchor);
@@ -164,7 +175,8 @@ namespace RhythmGame
                     if (key.wasPressedThisFrame && !pads[pad].Input.HasPointer)
                     {
                         keyboardHeld[pad] = true;
-                        judge.Press(pad, time);
+                        padInput = true;
+                        Strike(pad, time);
                     }
                     if (key.wasReleasedThisFrame && keyboardHeld[pad])
                     {
@@ -188,11 +200,38 @@ namespace RhythmGame
             if (time >= beatmap.duration && Session.IsFinished) FinishRun();
         }
 
+        public void NoteScreenTouch()
+        {
+            if (State == GameRunState.Playing) screenTouch = true;
+        }
+
+        private static long Bank()
+        {
+            GameManager manager = GameManager.Instance;
+            if (manager == null || !manager.IsReady || manager.Data == null || manager.Data.Player == null) return 0;
+            return manager.Data.Player.coins;
+        }
+
+        // Touch-only play does not pay. A connected drum, or the keys that stand in for it, does.
+        private bool PaysSticks()
+        {
+            bool drum = DrumInput.Instance != null && DrumInput.Instance.IsConnected;
+            if (drum || padInput) return true;
+            return !screenTouch;
+        }
+
         public void Press(int pad = 0)
         {
             if (State != GameRunState.Playing || Session.IsFinished) return;
-            judge.Press(pad, SongTime);
+            Strike(pad, SongTime);
             RenderButton(SongTime);
+        }
+
+        // A lit pad is graded by the judge. An empty tap still flashes, small and gray.
+        private void Strike(int pad, double time)
+        {
+            if (judge.Press(pad, time) || flashes == null || pads == null || pad < 0 || pad >= pads.Length || pads[pad] == null) return;
+            flashes.Play((RectTransform)pads[pad].transform, PadFlashPool.Kind.Miss);
         }
         public void Release(int pad = 0) { if (State == GameRunState.Playing && judge != null) judge.Release(pad, SongTime); }
 
@@ -201,6 +240,9 @@ namespace RhythmGame
             Color color;
             ColorUtility.TryParseHtmlString(hit.ColorHtml, out color);
             pads[points[hit.NoteIndex].Pad].ShowFeedback(hit, color);
+            if (flashes != null && hit.Judgement != Judgement.Miss)
+                flashes.Play((RectTransform)pads[points[hit.NoteIndex].Pad].transform,
+                    hit.Judgement == Judgement.Perfect ? PadFlashPool.Kind.Perfect : PadFlashPool.Kind.Good);
             judgementText.color = color;
             judgementText.text = hit.Judgement.ToString().ToUpperInvariant();
             judgementLife = .65f;
@@ -290,7 +332,15 @@ namespace RhythmGame
         {
             if (settled || Session == null) return;
             frozenTime = SongTime;
-            Result = data.Complete(Session);
+            long before = Bank();
+            bool pay = PaysSticks();
+            Result = data.Complete(Session, pay);
+            if (sticks != null)
+            {
+                sticks.Awards(pay);
+                sticks.Reset(before);
+                if (pay && Result.TotalCoins > 0) sticks.Award(Result.TotalCoins);
+            }
             settled = true;
             State = GameRunState.Result;
             RenderButton(frozenTime);
@@ -306,6 +356,7 @@ namespace RhythmGame
                 Result.Cleared ? Strings.T("game.result_saved") : Strings.T("game.reach_60_accuracy_to_clear"));
             if (data.HasUnsavedChanges) body += "\n" + Strings.T("game.save_failed_return_to_the_menu_to_retry");
             ShowModal(title, body, Strings.T("game.retry"));
+            if (flashes != null) flashes.transform.SetAsLastSibling();
         }
 
         private void PrimaryAction()
@@ -320,8 +371,7 @@ namespace RhythmGame
             State = GameRunState.Ready;
             ResetInput();
             if (data != null && data.HasUnsavedChanges) GameManager.Instance.Save();
-            if (animator != null) animator.PlayExit(() => SceneManager.LoadSceneAsync("MainMenu"));
-            else SceneManager.LoadSceneAsync("MainMenu");
+            SceneTransition.Load("MainMenu");
         }
         private void AbortRun()
         {

@@ -9,18 +9,22 @@ namespace RhythmGame
     // Settings (client reply v5 §5): drum-pad connection, sound (BGM, effects), language (zh / ja / en /
     // ko), Google account, latency calibration and contact. Every control writes straight to
     // PlayerSettings through RhythmGameData: language saves at once; volumes apply live while dragging
-    // and are saved when the screen closes. Pad connection, Google sign-in and contact are placeholders.
+    // and are saved when the screen closes. Pad connection and latency open the drum test (PadTestPopup);
+    // Google sign-in and contact are placeholders.
     public sealed class SettingsPopup : MonoBehaviour
     {
         private const int VolumeSteps = 10;   // sliders move in 10% steps
         [SerializeField] private Button closeButton, padButton, googleButton, latencyButton, inquiryButton;
+        [SerializeField] private Button appleButton, deleteAccountButton;   // client reply v6 §3-5
         [SerializeField] private Button[] languageButtons;   // same order as PlayerSettings.DisplayOrder
         [SerializeField] private Slider musicSlider, effectsSlider;
         [SerializeField] private Text title, padLabel, musicLabel, effectsLabel, languageLabel, googleLabel, latencyLabel, inquiryLabel,
             musicValue, effectsValue, status;
+        [SerializeField] private PadTestPopup padTestPrefab;
         [SerializeField] private LatencyCalibrationPopup latencyPrefab;
         private RhythmGameData data;
         private PopupTransition transition;
+        private PadTestPopup padTest;
         private LatencyCalibrationPopup latency;
         private AudioSource tick;
         private static AudioClip tickClip;
@@ -29,6 +33,7 @@ namespace RhythmGame
         private string message = "";
         public event Action Closed;
         public bool IsOpen { get { return transition.IsOpen; } }
+        public bool PadTestOpen { get { return padTest != null && padTest.IsOpen; } }
         public bool LatencyOpen { get { return latency != null && latency.IsOpen; } }
 
         private void Awake()
@@ -36,8 +41,10 @@ namespace RhythmGame
             data = GameManager.EnsureInstance().Data;
             transition = PopupTransition.For(gameObject);
             closeButton.onClick.AddListener(Close);
-            latencyButton.onClick.AddListener(OpenLatency);
-            foreach (Button placeholder in new[] { padButton, googleButton, inquiryButton })
+            padButton.onClick.AddListener(() => OpenPadTest(false));
+            latencyButton.onClick.AddListener(() => OpenPadTest(true));
+            appleButton.gameObject.SetActive(LoginController.ShowApple);
+            foreach (Button placeholder in new[] { googleButton, appleButton, deleteAccountButton, inquiryButton })
                 placeholder.onClick.AddListener(() => { message = Strings.T("settings.coming_soon"); Refresh(); });
             for (int i = 0; i < languageButtons.Length; i++)
             {
@@ -100,8 +107,11 @@ namespace RhythmGame
             inquiryLabel.text = Strings.T("settings.inquiry");
             status.text = string.IsNullOrEmpty(message) ? Strings.T("settings.auto_saved") : message;
             Label(closeButton, Strings.T("settings.close"));
-            Label(padButton, Strings.T("settings.pad_connect"));
+            DrumInput drum = DrumInput.EnsureInstance();
+            Label(padButton, Strings.T(drum.IsConnected ? "settings.pad_connected" : "settings.pad_connect"));
             Label(googleButton, Strings.T("settings.google_sign_in"));
+            Label(appleButton, Strings.T("settings.apple_sign_in"));
+            Label(deleteAccountButton, Strings.T("settings.delete_account"));
             Label(latencyButton, Strings.T("settings.latency_open"));
             Label(inquiryButton, Strings.T("settings.inquiry_open"));
             for (int i = 0; i < languageButtons.Length; i++)
@@ -122,22 +132,36 @@ namespace RhythmGame
         private static string Percent(float volume) { return Mathf.RoundToInt(volume * 100) + "%"; }
         private static void Label(Button button, string text) { button.GetComponentInChildren<Text>().text = text; }
 
-        // Calibration opens on top of this screen and hands control back when it closes.
+        // The drum test opens on top of this screen and hands control back when it closes; from the
+        // latency row it goes straight into calibration when the drum is connected.
+        public void OpenPadTest(bool calibrate)
+        {
+            if (!IsOpen || PadTestOpen) return;
+            if (padTest == null)
+            {
+                padTest = Instantiate(padTestPrefab, transform.parent, false);
+                padTest.Closed += () =>
+                {
+                    Refresh();
+                    if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(padButton.gameObject);
+                };
+            }
+            padTest.transform.SetAsLastSibling();
+            if (calibrate) padTest.ShowAndCalibrate(); else padTest.Show();
+        }
+
+        // Bluetooth tap calibration. The latency row opens the drum test instead; play-mode tests call this directly.
         public void OpenLatency()
         {
-            if (!IsOpen || LatencyOpen) return;
-            if (latency == null)
-            {
-                latency = Instantiate(latencyPrefab, transform.parent, false);
-                latency.Closed += () => { if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(latencyButton.gameObject); };
-            }
+            if (!IsOpen || LatencyOpen || latencyPrefab == null) return;
+            if (latency == null) latency = Instantiate(latencyPrefab, transform.parent, false);
             latency.transform.SetAsLastSibling();
             latency.Show();
         }
 
         private void Update()
         {
-            if (!IsOpen || LatencyOpen) return;
+            if (!IsOpen || PadTestOpen || LatencyOpen) return;
             if ((Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) ||
                 (Gamepad.current != null && Gamepad.current.buttonEast.wasPressedThisFrame)) Close();
         }
@@ -145,6 +169,7 @@ namespace RhythmGame
         public void Close()
         {
             if (!IsOpen) return;
+            if (PadTestOpen) padTest.Close();
             if (LatencyOpen) latency.Close();
             // Volumes were previewed in memory; persist them once here.
             if (data.HasUnsavedChanges)

@@ -123,7 +123,7 @@ namespace RhythmGame.Tests
         }
 
         [Test]
-        public void HalfHeartsFallOnMissesAndATwentyComboRestoresOneHeart()
+        public void HalfHeartsFallOnMissesAndHitsNeverRestoreThem()
         {
             var cue = Cue(1, 0);
             var score = new MiniGameScore();
@@ -136,14 +136,12 @@ namespace RhythmGame.Tests
             score.Add(new CueResult { Cue = Cue(1, 0, CueKind.Forbidden), Outcome = CueOutcome.ForbiddenHit });
             score.Add(new CueResult { Cue = cue, Outcome = CueOutcome.Missed });
             Assert.AreEqual(MiniGameScore.MaxHalves - 3, score.Halves, "A wrong target costs half a heart.");
-            for (int i = 0; i < MiniGameScore.ComboPerLife; i++) score.Add(new CueResult { Cue = cue, Outcome = CueOutcome.Hit, Grade = HitGrade.Perfect });
-            Assert.AreEqual(MiniGameScore.MaxHalves - 1, score.Halves, "Twenty in a row gives one heart back.");
-            Assert.AreEqual(2000, score.Score);
+            for (int i = 0; i < 40; i++) score.Add(new CueResult { Cue = cue, Outcome = CueOutcome.Hit, Grade = HitGrade.Perfect });
+            Assert.AreEqual(MiniGameScore.MaxHalves - 3, score.Halves, "A long combo never gives a heart back.");
+            Assert.AreEqual(4000, score.Score);
             score.Add(new CueResult { Cue = Cue(1, 0, CueKind.Bonus), Outcome = CueOutcome.Hit, Grade = HitGrade.Good });
-            Assert.AreEqual(2150, score.Score, "Bonus cues are worth triple.");
-            Assert.AreEqual(MiniGameScore.MaxHalves - 1, score.Halves, "The heal does not stack past the next twenty.");
-            for (int i = 0; i < MiniGameScore.ComboPerLife - 1; i++) score.Add(new CueResult { Cue = cue, Outcome = CueOutcome.Hit, Grade = HitGrade.Perfect });
-            Assert.AreEqual(MiniGameScore.MaxHalves, score.Halves, "One heart back cannot rise past five hearts.");
+            Assert.AreEqual(4150, score.Score, "Bonus cues are worth triple.");
+            Assert.AreEqual(MiniGameScore.MaxHalves - 3, score.Halves);
             var fresh = new MiniGameScore();
             for (int i = 0; i < MiniGameScore.MaxHalves; i++) fresh.Add(new CueResult { Cue = cue, Outcome = CueOutcome.Missed });
             Assert.AreEqual(0, fresh.Halves);
@@ -234,8 +232,8 @@ namespace RhythmGame.Tests
             CollectionAssert.AreEqual(new[] { MochiChart.Pad }, MochiChart.Pads(1));
             for (int i = 1; i < cues.Count; i++)
                 Assert.GreaterOrEqual(cues[i].Time - cues[i - 1].Time, MochiChart.BeatSeconds / 2 - 1e-9, "At least half a beat apart.");
-            Assert.IsTrue(cues.All(c => c.Time < MochiChart.RunSeconds), "The run ends at about one minute.");
-            Assert.IsFalse(cues.Any(c => c.Kind == CueKind.Forbidden), "The one-minute game does not feint.");
+            Assert.IsTrue(cues.All(c => c.Time < MochiChart.RunSeconds), "The run ends at 8 minutes.");
+            Assert.IsFalse(cues.Any(c => c.Kind == CueKind.Forbidden && c.Time < MochiChart.StageOf(6).StartSeconds), "No feints before level 6.");
             AssertPlayable(cues, "mochi");
         }
 
@@ -249,8 +247,8 @@ namespace RhythmGame.Tests
             Assert.Greater(MochiChart.JudgementOpens, 5 * MochiChart.BeatSeconds, "Both listen beats begin before the window opens.");
             Assert.GreaterOrEqual(MochiChart.StageOf(1).GoodMs, 900, "Level 1 counts a strike through the whole slow lift.");
             Assert.AreEqual(1, MochiChart.StageAt(0).Number);
-            Assert.AreEqual(1, MochiChart.StageAt(MochiChart.RunSeconds - .01).Number);
-            Assert.AreEqual(60, MochiChart.RunSeconds, "About one minute, then the clear dialog.");
+            Assert.AreEqual(10, MochiChart.StageAt(MochiChart.RunSeconds - .01).Number);
+            Assert.AreEqual(StageTable.ClearSeconds, MochiChart.RunSeconds, "Eight minutes, then the clear dialog.");
             Assert.Greater(MochiChart.StageOf(1).GoodMs, StageTable.Get(1).GoodMs);
             Assert.Greater(MochiChart.StageOf(1).PerfectMs, StageTable.Get(1).PerfectMs);
             for (int n = 2; n <= 10; n++)
@@ -276,14 +274,14 @@ namespace RhythmGame.Tests
         }
 
         [Test]
-        public void MochiLastsAboutOneMinute()
+        public void MochiLastsEightMinutes()
         {
             for (int seed = 0; seed < 5; seed++)
             {
                 List<BeatCue> cues = MochiChart.Generate(seed);
-                Assert.Greater(cues.Count, 10, "A minute still has a run of cakes.");
+                Assert.Greater(cues.Count, 100, "Eight minutes is a long run of cakes.");
                 Assert.Less(cues[cues.Count - 1].Time, MochiChart.RunSeconds);
-                Assert.Greater(cues[cues.Count - 1].Time, MochiChart.RunSeconds * .5);
+                Assert.Greater(cues[cues.Count - 1].Time, MochiChart.RunSeconds - 5);
             }
         }
     }

@@ -236,6 +236,12 @@ namespace RhythmGame
             }
         }
 
+        public RectTransform Drum(int pad)
+        {
+            if (drums == null || pad < 0 || pad >= drums.Length || drums[pad] == null) return null;
+            return drums[pad].rectTransform;
+        }
+
         public void Strike(int pad)
         {
             if (drums == null || pad < 0 || pad >= drums.Length || drums[pad] == null) return;
@@ -457,6 +463,7 @@ namespace RhythmGame
             public void OnPointerDown(PointerEventData eventData)
             {
                 if (eventData.button != PointerEventData.InputButton.Left || owner == null) return;
+                owner.NoteScreenTouch();
                 owner.Press(pad);
             }
         }

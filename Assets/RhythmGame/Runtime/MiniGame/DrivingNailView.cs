@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace RhythmGame
@@ -14,19 +16,27 @@ namespace RhythmGame
         private const float BoardDrop = 40f, BoardHeight = 184f;
         private float fullSink;
         [SerializeField] private RectTransform board, hammer, carpenter, furniture;
-        [SerializeField] private Image[] nails, dust, collected;
-        [SerializeField] private Image carpenterImage, furnitureImage;
+        [SerializeField] private Image nailTemplate, carpenterImage, furnitureImage;
+        [FormerlySerializedAs("nails")]
+        [SerializeField] private Image[] nailSlots;
+        [SerializeField] private Image[] dust, collected;
         [SerializeField] private Sprite nailStraight, nailBent, carpenterIdle, carpenterScratch, chair, desk, house;
         [SerializeField] private Text countText, caption, bubble;
         // Finished nails sit to the left. Positive Z swings the head to the right.
         // The wind-up is 180 degrees. The blow stops at 90, so the side of the head meets the nail
         // instead of the face coming down in line with it.
         private const float Raised = 180f, StrikeAngle = 90f, Hang = 18f;
+        private const int VisibleNails = 6;
+        private const float NailSpacing = 100f;
         private Vector2 boardHome, carpenterHome, hammerTarget;
-        private Vector2[] nailHome;
+        private readonly List<Image> nails = new List<Image>();
+        private readonly List<Vector2> nailHome = new List<Vector2>();
+        private readonly List<bool> seatedNail = new List<bool>();
+        private readonly List<int> slotVariant = new List<int>();
         private float spacing, restY, angle;
-        private bool[] seatedNail;
-        private int active = -1, firstVariant, bendSlot = -1;
+        private int active = -1, firstVariant;
+        private Image pendingBend, bendShown;
+        private bool laidOut;
         private bool bendOnArrival, sinkOnArrival;
         private int sinkLeft, sinkTotal;
         private bool struck;
@@ -34,30 +44,44 @@ namespace RhythmGame
         public event Action Pressed;
         public event Action Struck;
 
-        private void Awake()
+        private void Awake() { EnsureLayout(); }
+
+        // The scene keeps a single nail. Every nail the player hits is a copy of that one.
+        private void ResolveTemplate()
         {
+            if (nailTemplate == null && nailSlots != null && nailSlots.Length > 0) nailTemplate = nailSlots[0];
+            if (nailSlots == null) return;
+            for (int i = 0; i < nailSlots.Length; i++)
+            {
+                Image extra = nailSlots[i];
+                if (extra == null || extra == nailTemplate) continue;
+                Destroy(extra.gameObject);
+            }
+            nailSlots = null;
+        }
+
+        private void EnsureLayout()
+        {
+            if (laidOut) return;
+            laidOut = true;
+            ResolveTemplate();
             FitBoard();
             boardHome = board.anchoredPosition;
             carpenterHome = carpenter.anchoredPosition;
-            nailHome = new Vector2[nails.Length];
-            seatedNail = new bool[nails.Length];
-            for (int i = 0; i < nails.Length; i++)
-            {
-                nailHome[i] = nails[i].rectTransform.anchoredPosition;
-                nails[i].gameObject.SetActive(i == 0);
-            }
-            spacing = nails.Length > 1 ? nailHome[1].x - nailHome[0].x : 100f;
-            float length = nails[0].rectTransform.sizeDelta.y;
+            spacing = NailSpacing;
+            float length = nailTemplate.rectTransform.sizeDelta.y;
             float woodTop = board.sizeDelta.y * .5f;
             restY = woodTop + length * (2f / 3f);
             fullSink = length * (2f / 3f);
-            PlaceRow(1);
-            hammerTarget = SideHold(nailHome[0].x);
+            nailTemplate.gameObject.SetActive(false);
+            hammerTarget = SideHold(0);
             hammer.anchoredPosition = hammerTarget;
             SetAngle(Raised);
             furnitureImage.enabled = false;
             caption.text = Strings.T("nails.remaining");
         }
+
+        public RectTransform Hammer { get { return hammer; } }
 
         public void OnPointerDown(PointerEventData e)
         {
@@ -66,32 +90,30 @@ namespace RhythmGame
 
         public void Clear()
         {
+            EnsureLayout();
             StopAllCoroutines();
             swing = reaction = shake = null;
             board.anchoredPosition = boardHome;
             carpenter.anchoredPosition = carpenterHome;
             SetAngle(Raised);
-            hammer.anchoredPosition = SideHold(nailHome[0].x);
+            hammer.anchoredPosition = SideHold(0);
             carpenterImage.sprite = carpenterIdle;
             furnitureImage.sprite = chair;
             furnitureImage.enabled = false;
             furniture.localScale = Vector3.one;
             bubble.text = countText.text = "";
             caption.text = Strings.T("nails.remaining");
-            for (int i = 0; i < nails.Length; i++)
-            {
-                nails[i].sprite = nailStraight;
-                nails[i].rectTransform.anchoredPosition = nailHome[i];
-                nails[i].rectTransform.localEulerAngles = Vector3.zero;
-                nails[i].color = Color.white;
-                nails[i].gameObject.SetActive(false);
-            }
+            for (int i = nails.Count - 1; i >= 0; i--)
+                if (nails[i] != null) Destroy(nails[i].gameObject);
+            nails.Clear();
+            nailHome.Clear();
+            seatedNail.Clear();
+            slotVariant.Clear();
             foreach (Image speck in dust) speck.gameObject.SetActive(false);
             foreach (Image icon in collected) icon.color = new Color(1, 1, 1, .28f);
-            for (int i = 0; i < seatedNail.Length; i++) seatedNail[i] = false;
             active = -1;
             firstVariant = 0;
-            bendSlot = -1;
+            pendingBend = bendShown = null;
             bendOnArrival = sinkOnArrival = false;
         }
 
@@ -101,6 +123,14 @@ namespace RhythmGame
             furnitureImage.enabled = true;
             furniture.localScale = Vector3.one;
             Collect(piece);
+        }
+
+        // The next five nails are a new job: the furniture and the three icons start over.
+        public void NewJob()
+        {
+            furnitureImage.enabled = false;
+            furniture.localScale = Vector3.one;
+            foreach (Image icon in collected) icon.color = new Color(1, 1, 1, .28f);
         }
 
         public void ShowProject(NailChart.Piece piece, float scale)
@@ -119,22 +149,23 @@ namespace RhythmGame
             StartCoroutine(PixelTween.Punch(collected[index].rectTransform, .35f, .24f));
         }
 
-        // variant 0 is the only nail on the board. Each later nail is born when it becomes the one to hit.
+        // Each nail is created when it becomes the one to hit. Six fit on the board; an older one leaves as a new one arrives.
         public void Arm(int variant, int left, int total)
         {
-            while (variant - firstVariant >= nails.Length)
+            EnsureLayout();
+            while (variant - firstVariant >= nails.Count)
             {
-                ShiftLeft();
-                firstVariant++;
+                if (nails.Count >= VisibleNails) DropOldest();
+                else SpawnNail();
             }
             active = variant - firstVariant;
+            slotVariant[active] = variant;
             Image born = nails[active];
-            born.sprite = nailStraight;
-            born.color = Color.white;
-            born.rectTransform.localEulerAngles = Vector3.zero;
+            Straighten(born);
             born.rectTransform.anchoredPosition = new Vector2(born.rectTransform.anchoredPosition.x, restY);
-            PlaceRow(active + 1);
+            PlaceRow();
             HoldSeated();
+            Straighten(born);
             hammerTarget = SideHold(nailHome[active].x);
             // A hammer that is still down on a nail stays there. Snapping it onto the next nail
             // while it is cocked is what made a miss bend the nail with the head in the air.
@@ -142,29 +173,61 @@ namespace RhythmGame
             ShowCount(left, total);
         }
 
-        private void ShiftLeft()
+        // A new nail is a new object. Copying the template would also copy a bend if that object had been hit.
+        private Image SpawnNail()
         {
-            for (int i = 0; i < nails.Length - 1; i++)
-            {
-                float sunk = nails[i + 1].rectTransform.anchoredPosition.y - nailHome[i + 1].y;
-                nails[i].sprite = nails[i + 1].sprite;
-                nails[i].color = nails[i + 1].color;
-                nails[i].rectTransform.localEulerAngles = nails[i + 1].rectTransform.localEulerAngles;
-                nails[i].rectTransform.anchoredPosition = new Vector2(nails[i].rectTransform.anchoredPosition.x, nailHome[i].y + sunk);
-                seatedNail[i] = seatedNail[i + 1];
-            }
-            seatedNail[nails.Length - 1] = false;
+            var go = new GameObject("Nail", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            go.layer = nailTemplate.gameObject.layer;
+            go.transform.SetParent(board, false);
+            RectTransform src = nailTemplate.rectTransform;
+            RectTransform rect = go.GetComponent<RectTransform>();
+            rect.anchorMin = src.anchorMin;
+            rect.anchorMax = src.anchorMax;
+            rect.pivot = src.pivot;
+            rect.sizeDelta = src.sizeDelta;
+            rect.localScale = Vector3.one;
+            rect.localRotation = Quaternion.identity;
+            rect.anchoredPosition = new Vector2(0, restY);
+            Image nail = go.GetComponent<Image>();
+            nail.raycastTarget = false;
+            nail.preserveAspect = nailTemplate.preserveAspect;
+            nail.type = nailTemplate.type;
+            nail.pixelsPerUnitMultiplier = nailTemplate.pixelsPerUnitMultiplier;
+            Straighten(nail);
+            go.transform.SetSiblingIndex(nailTemplate.transform.GetSiblingIndex());
+            nails.Add(nail);
+            nailHome.Add(new Vector2(0, restY));
+            seatedNail.Add(false);
+            slotVariant.Add(-1);
+            return nail;
         }
 
-        // shown nails sit in the middle of the board. Nails past shown stay hidden until they are born.
-        private void PlaceRow(int shown)
+        private void Straighten(Image nail)
         {
+            if (nail == null) return;
+            nail.sprite = nailStraight != null ? nailStraight : nailTemplate.sprite;
+            nail.color = Color.white;
+            nail.rectTransform.localRotation = Quaternion.identity;
+        }
+
+        private void DropOldest()
+        {
+            Image gone = nails[0];
+            nails.RemoveAt(0);
+            nailHome.RemoveAt(0);
+            seatedNail.RemoveAt(0);
+            slotVariant.RemoveAt(0);
+            if (gone != null) Destroy(gone.gameObject);
+            firstVariant++;
+        }
+
+        // The nails on the board sit in a row, centered. Each keeps however far it has already been driven.
+        private void PlaceRow()
+        {
+            int shown = nails.Count;
             float start = -(shown - 1) * spacing * .5f;
-            for (int i = 0; i < nails.Length; i++)
+            for (int i = 0; i < shown; i++)
             {
-                bool used = i < shown;
-                nails[i].gameObject.SetActive(used);
-                if (!used) continue;
                 float sunk = nails[i].rectTransform.anchoredPosition.y - nailHome[i].y;
                 float x = start + i * spacing;
                 nailHome[i] = new Vector2(x, restY);
@@ -174,7 +237,12 @@ namespace RhythmGame
 
         public void Raise(float seconds)
         {
+            // The next nail gets its own swing. A miss whose hammer never arrived does not bend it.
+            if (SideDown) CommitBend();
+            else pendingBend = null;
             Halt();
+            bendOnArrival = false;
+            sinkOnArrival = false;
             struck = false;
             swing = StartCoroutine(CueSwing(Mathf.Max(.16f, seconds)));
         }
@@ -183,6 +251,7 @@ namespace RhythmGame
         {
             ShowCount(left, total);
             bendOnArrival = false;
+            pendingBend = null;
             sinkLeft = left;
             sinkTotal = total;
             // A beat hit must not cut the swing off at the top and sink the nail from there.
@@ -200,16 +269,16 @@ namespace RhythmGame
             StartCoroutine(PixelTween.Punch(nails[active].rectTransform, .2f, .16f));
         }
 
-        public void Bend(string text, int total)
+        public void Bend(int variant, string text, int total)
         {
             ShowCount(0, total);
             carpenterImage.sprite = carpenterScratch;
             React(text, Palette.DangerText, jump: false);
-            // The nail bends when the head arrives, not while the hammer is still at the top of the swing.
-            bendSlot = active;
-            bendOnArrival = true;
-            if (swing != null) return;
-            if (SideDown) { Connect(); ApplyBend(); return; }
+            // Remember which nail was missed. It bends only once the hammer head actually meets it.
+            pendingBend = FindLoose(variant);
+            bendOnArrival = pendingBend != null;
+            if (!bendOnArrival || swing != null) return;
+            if (SideDown) { CommitBend(); Connect(); return; }
             swing = StartCoroutine(LandAndBend());
         }
 
@@ -315,24 +384,31 @@ namespace RhythmGame
             float start = Time.unscaledTime + Mathf.Max(0f, seconds - motion);
             float liftEnd = start + motion * .38f;
             float end = start + motion;
-            while (Time.unscaledTime < start) yield return null;
-            while (Time.unscaledTime < liftEnd)
+            while (Time.unscaledTime < start && !bendOnArrival && !sinkOnArrival) yield return null;
+            if (!bendOnArrival && !sinkOnArrival)
             {
-                float t = PixelTween.OutCubic(Mathf.InverseLerp(start, liftEnd, Time.unscaledTime));
-                SetAngle(Mathf.Lerp(from, Raised, t));
-                hammer.anchoredPosition = Vector2.Lerp(fromPos, target, t);
-                yield return null;
+                while (Time.unscaledTime < liftEnd && !bendOnArrival && !sinkOnArrival)
+                {
+                    float t = PixelTween.OutCubic(Mathf.InverseLerp(start, liftEnd, Time.unscaledTime));
+                    SetAngle(Mathf.Lerp(from, Raised, t));
+                    hammer.anchoredPosition = Vector2.Lerp(fromPos, target, t);
+                    yield return null;
+                }
+                if (!bendOnArrival && !sinkOnArrival)
+                {
+                    hammer.anchoredPosition = target;
+                    SetAngle(Raised);
+                    while (Time.unscaledTime < end && !bendOnArrival && !sinkOnArrival)
+                    {
+                        float u = Mathf.InverseLerp(liftEnd, end, Time.unscaledTime);
+                        float t = Mathf.Lerp(u, PixelTween.InOutSine(u), .2f);
+                        SetAngle(Mathf.Lerp(Raised, StrikeAngle + Hang, t));
+                        yield return null;
+                    }
+                }
             }
-            hammer.anchoredPosition = target;
-            SetAngle(Raised);
-            while (Time.unscaledTime < end)
-            {
-                float u = Mathf.InverseLerp(liftEnd, end, Time.unscaledTime);
-                float t = Mathf.Lerp(u, PixelTween.InOutSine(u), .2f);
-                SetAngle(Mathf.Lerp(Raised, StrikeAngle + Hang, t));
-                yield return null;
-            }
-            SetAngle(StrikeAngle + Hang);
+            if (!bendOnArrival && !sinkOnArrival) SetAngle(StrikeAngle + Hang);
+            else hammer.anchoredPosition = target;
             while (!sinkOnArrival && !bendOnArrival) yield return null;
             yield return StartCoroutine(SwingBetween(angle, StrikeAngle, .06f));
             SetAngle(StrikeAngle);
@@ -340,20 +416,22 @@ namespace RhythmGame
             if (sinkOnArrival)
             {
                 sinkOnArrival = false;
+                bendOnArrival = false;
+                pendingBend = null;
                 swing = StartCoroutine(Drive(sinkLeft, sinkTotal));
                 yield break;
             }
-            if (bendOnArrival) ApplyBend();
+            CommitBend();
             swing = null;
         }
 
-        // A miss that arrives with the hammer still raised comes down to 90 before the nail can bend.
+        // A miss that arrives with the hammer still raised comes down to 90, and only then does the nail bend.
         private IEnumerator LandAndBend()
         {
             if (!SideDown) yield return StartCoroutine(SwingBetween(angle, StrikeAngle, .06f));
             SetAngle(StrikeAngle);
+            CommitBend();
             Connect();
-            ApplyBend();
             swing = null;
         }
 
@@ -369,16 +447,33 @@ namespace RhythmGame
             SetAngle(to);
         }
 
-        private void ApplyBend()
+        // The bent picture is applied only after the hammer has come down on that nail.
+        private void CommitBend()
         {
+            Image nail = pendingBend;
+            pendingBend = null;
             bendOnArrival = false;
-            if (bendSlot >= 0 && bendSlot < nails.Length && !seatedNail[bendSlot])
-            {
-                nails[bendSlot].sprite = nailBent;
-                nails[bendSlot].rectTransform.localEulerAngles = new Vector3(0, 0, 18);
-            }
-            bendSlot = -1;
-            HoldSeated();
+            if (nail == null) return;
+            bendShown = nail;
+            nail.sprite = nailBent;
+            nail.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 18f);
+        }
+
+        // A nail that has not been struck stays straight, including one that just slid into the row.
+        private void LateUpdate()
+        {
+            if (active < 0 || active >= nails.Count) return;
+            Image nail = nails[active];
+            if (nail == null || nail == bendShown) return;
+            if (nail.sprite == nailBent || Quaternion.Angle(nail.rectTransform.localRotation, Quaternion.identity) > 1f)
+                Straighten(nail);
+        }
+
+        private Image FindLoose(int variant)
+        {
+            for (int i = 0; i < slotVariant.Count; i++)
+                if (slotVariant[i] == variant && !seatedNail[i]) return nails[i];
+            return null;
         }
 
         private void Halt()
@@ -443,12 +538,12 @@ namespace RhythmGame
             Image nail = nails[slot];
             nail.sprite = nailStraight;
             nail.color = new Color(.75f, .78f, .82f, 1f);
-            nail.rectTransform.localEulerAngles = Vector3.zero;
+            nail.rectTransform.localRotation = Quaternion.identity;
         }
 
         private void HoldSeated()
         {
-            for (int i = 0; i < seatedNail.Length; i++) if (seatedNail[i]) Hold(i);
+            for (int i = 0; i < seatedNail.Count; i++) if (seatedNail[i]) Hold(i);
         }
 
         private void React(string text, Color color, bool jump)

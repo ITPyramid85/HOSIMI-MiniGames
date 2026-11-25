@@ -118,10 +118,10 @@ games.ice,凿冰捕鱼,Ice Fishing,얼음 낚시,氷の穴釣り
 ice.title,凿冰捕鱼,Ice Fishing,얼음 낚시,氷の穴釣り
 ice.caught,抓到的鱼：,Caught: ,잡은 물고기: ,釣れた魚：
 ice.dex,鱼图鉴 ,Fish guide ,물고기 도감 ,魚図鑑 
-ice.fall,掉进水里了！,You fell in!,물에 빠졌어요!,水に落ちた！
+ice.fall,心没了，再来！,The hearts ran out. Again!,하트가 떨어졌어요. 다시!,ハートがなくなった。もう一回！
 ice.prompt_what,鱼会停在左、中、右其中一个冰窟窿。左边敲4号鼓垫。中间敲5号。右边敲8号。,The fish stops at the left hole or the middle or the right. Pad 4 is the left. Pad 5 is the middle. Pad 8 is the right.,물고기가 왼쪽이나 가운데나 오른쪽에 멈춥니다. 왼쪽은 4번 패드이고 가운데는 5번이며 오른쪽은 8번입니다.,魚は左・真ん中・右のどれかに止まります。左は4番。真ん中は5番。右は8番。
 ice.prompt_when,大鱼要连敲两下。它假装停下又逃走时，不要敲。,A big fish needs two strikes in a row. When it only pretends to stop do not strike.,큰 물고기는 연속으로 두 번 두드리세요. 멈추는 척하고 도망가면 치지 마세요.,大きな魚は二回連続で叩く。止まりかけても逃げるときは叩かない。
-ice.prompt_twist,鱼越来越快。敲错位置就会掉进水里。抓到的鱼堆进桶里，并记入图鉴。,The fish get faster. Strike the wrong hole and you fall in. Catches fill the bucket and the guide.,물고기는 점점 빨라집니다. 다른 곳을 치면 물에 빠집니다. 잡은 물고기는 양동이에 쌓이고 도감에 남습니다.,魚はだんだん速くなる。違う場所を叩くと水に落ちる。釣れた魚は桶に積まれ、図鑑に残る。
+ice.prompt_twist,鱼越来越快。敲错位置会掉进水里，扣半颗心，爬上来继续。抓到的鱼堆进桶里，并记入图鉴。,The fish get faster. Strike the wrong hole and you fall in and lose half a heart then climb back out. Catches fill the bucket and the guide.,물고기는 점점 빨라집니다. 다른 곳을 치면 물에 빠져 하트 반 개가 줄고 다시 올라옵니다. 잡은 물고기는 양동이에 쌓이고 도감에 남습니다.,魚はだんだん速くなる。違う場所を叩くと水に落ちてハートが半分減り、また上がってくる。釣れた魚は桶に積まれ、図鑑に残る。
 ice.fish.perch,河鲈,Perch,농어,パーチ
 ice.fish.trout,鳟鱼,Trout,송어,マス
 ice.fish.carp,鲤鱼,Carp,잉어,コイ
@@ -208,6 +208,8 @@ minigame.complete,退出,Exit,종료,終了
 minigame.exit_ask,确定退出吗？,Exit now?,정말 종료할까요?,終了しますか？
 minigame.continue,继续,CONTINUE,계속,続ける
 minigame.drumsticks,鼓棒：+,Drumsticks: +,드럼스틱: +,スティック：+
+minigame.stick_total,鼓棒： ,Drumsticks: ,드럼스틱: ,スティック： 
+minigame.stick_pad_only,只有连接鼓垫进行游戏时才能获得鼓棒。,Drumsticks can be earned only by playing with a connected drum pad.,드럼스틱은 연결된 드럼 패드를 사용하여 플레이할 때만 획득할 수 있습니다.,接続したドラムパッドでプレイしたときだけドラムスティックを獲得できます。
 minigame.early,早 ,EARLY ,빠름 ,早い 
 minigame.late,晚 ,LATE ,늦음 ,遅い 
 minigame.new_best,新纪录,New Record,신기록,新記録
@@ -220,7 +222,7 @@ mochi.lose,年糕没打成，再来！,The rice cake got away. Again!,떡이 엉
 mochi.pile,年糕堆成了山。奶奶跳起舞来。,The cakes pile into a mountain and Grandma dances.,떡이 산처럼 쌓이고 할머니가 춤을 춥니다.,もちが山になっておばあちゃんが踊る。
 mochi.rainbow,彩虹年糕,Rainbow rice cake,무지개 떡,にじもち
 mochi.ouch,哎哟！,Ouch!,아이고!,いたっ！
-mochi.prompt_twist,大约一分钟后结束。,It ends after about a minute.,약 1분이 되면 끝납니다.,およそ一分で終わる。
+mochi.prompt_twist,心扣完前一直进行；坚持 8 分钟就通关,Keep going until the final button is fastened; persist for 8 minutes to clear the level.,약 8분이 되면 끝납니다.,およそ8分で終わる。
 mochi.prompt_what,奶奶翻好年糕，就用年糕锤敲 8 号鼓垫。,"When Grandma flips the rice cake, strike pad 8.",할머니가 떡을 뒤집으면 8번 패드를 치세요.,おばあちゃんがもちを返したら、8番パッドをたたこう。
 mochi.prompt_when,奶奶的手收回来的那一拍，就是敲的时机。,Strike on the beat her hand comes out.,할머니 손이 빠지는 박자에 치세요.,手がもどる拍がたたくタイミング。
 mochi.splat,啪叽！,Splat!,철퍽!,ベチャッ！
@@ -336,9 +338,9 @@ whack.the_moles_win_again,地鼠赢了，再来！,The moles win. Again!,두더�
 whack.whack_a_mole,打地鼠,WHACK-A-MOLE,두더지 잡기,モグラたたき
 wood.bonus,西瓜！,Melon!,수박!,スイカ！
 wood.clang,当！,Clang!,팅!,カン！
-wood.lose,斧子崩了，再来！,The axe bounced off. Again!,도끼가 튕겼어요. 다시!,斧がはじかれた。もう一回！
+wood.lose,心没了，再来！,The hearts ran out. Again!,하트가 떨어졌어요. 다시!,ハートがなくなった。もう一回！
 wood.miss,没劈开！,Missed!,못 쪼갰어!,割れなかった！
-wood.prompt_twist,"西瓜是奖励。石头千万别砍，砍到斧子就崩飞、游戏结束。连砍两次斧头变金，金斧挡一次石头后变回普通斧。","Watermelon is a bonus. Never chop a stone: the axe bounces off and the run ends. Two hits in a row turn the axe gold, and the gold axe survives one stone before it turns plain again.","수박은 보너스입니다. 돌은 치면 안 됩니다. 치면 도끼가 튕겨 날아가며 게임이 끝납니다. 두 번 연속으로 맞히면 도끼가 황금색이 되고, 황금도끼는 돌을 한 번 막은 다음 일반도끼로 돌아갑니다.","スイカはボーナス。石は割らない。割ると斧がはじき飛ばされて終わり。二回続けると斧が金になり、金の斧は石を一度だけ防いで普通の斧に戻る。"
+wood.prompt_twist,"西瓜是奖励。砍到石头扣半颗心，斧子不飞。连砍两次斧头变金，金斧碰到石头就变回普通斧。","Watermelon is a bonus. Chopping a stone costs half a heart and the axe stays. Two chops in a row turn the axe gold and one stone turns that gold axe plain again.","수박은 보너스입니다. 돌을 치면 하트 반 개가 줄고 도끼는 날아가지 않습니다. 두 번 연속으로 맞히면 도끼가 황금색이 되고 황금도끼는 돌을 치면 일반도끼로 돌아갑니다.","スイカはボーナス。石を割るとハートが半分減り斧はそのまま。二回続けると斧が金になり、金の斧は石に当てると普通の斧に戻る。"
 wood.prompt_what,传送带把柴送过来。粗柴要连砍两拍。,The belt brings the wood along. A thick log takes two beats.,컨베이어 벨트를 따라 장작이 나옵니다. 굵은 장작은 두 박입니다.,ベルトに乗ってまきが来る。太いまきは二拍。
 wood.prompt_when,柴经过斧头的那一拍，砍 8 号鼓垫。,Strike pad 8 on the beat it passes the axe.,도끼 앞을 지나는 박자에 8번 패드를 치세요.,斧の前を通る拍に8番をたたこう。
 wood.title,劈柴,Chopping Wood,장작 패기,まき割り

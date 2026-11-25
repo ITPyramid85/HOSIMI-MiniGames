@@ -16,6 +16,7 @@ namespace RhythmGame
         {
             if (pointer.HasValue || e.button != PointerEventData.InputButton.Left || !controller.AcceptsPadPointer(padIndex)) return;
             pointer = e.pointerId;
+            controller.NoteScreenTouch();
             controller.Press(padIndex);
         }
         public void OnPointerUp(PointerEventData e)

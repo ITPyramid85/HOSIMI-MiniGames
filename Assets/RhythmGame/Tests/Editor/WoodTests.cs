@@ -26,7 +26,11 @@ namespace RhythmGame.Tests
             var thick = cues.Where(c => c.Kind == CueKind.Normal).GroupBy(c => c.Variant).First(g => g.Count() == 2).OrderBy(c => c.Time).ToArray();
             Assert.AreEqual(WoodChart.BeatSeconds, thick[1].Time - thick[0].Time, .001, "A thick log is two beats in a row.");
             Assert.AreEqual(2, WoodChart.GoldAt);
-            Assert.IsTrue(cues.Any(c => c.Kind == CueKind.Forbidden && c.Time < StageTable.Get(3).StartSeconds), "A stone shows up before stage 3.");
+            Assert.IsTrue(cues.Any(c => c.Kind == CueKind.Forbidden && c.Time < WoodChart.RunSeconds), "A stone shows up during the two minutes.");
+            Assert.IsTrue(cues.All(c => c.Time < WoodChart.RunSeconds), "Every piece is inside the two minutes.");
+            Assert.Greater(cues[cues.Count - 1].Time, WoodChart.RunSeconds - 5, "Pieces come right up to the end.");
+            Stage stage1 = StageTable.Get(1);
+            Assert.IsTrue(cues.All(c => c.PerfectMs == stage1.PerfectMs && c.GoodMs == stage1.GoodMs), "The belt never enters stage 2.");
         }
     }
 }

@@ -14,13 +14,18 @@ namespace RhythmGame.Tests
         }
 
         [Test]
-        public void TheJobIsFiveNailsOfOneHit()
+        public void NailsKeepComingForTwoMinutes()
         {
             List<BeatCue> cues = NailChart.Generate(0);
             Assert.AreEqual(NailChart.FirstCue, cues[0].Time, .001);
-            Assert.AreEqual(NailChart.NailCount, cues.Select(c => c.Variant).Distinct().Count());
+            int nails = cues.Select(c => c.Variant).Distinct().Count();
+            Assert.Greater(nails, NailChart.NailCount, "Nails keep coming past the first five.");
             Assert.IsTrue(cues.All(c => c.Pad == NailChart.Pad));
-            for (int nail = 0; nail < NailChart.NailCount; nail++)
+            Assert.IsTrue(cues.All(c => c.Time < NailChart.RunSeconds), "Every nail is inside the two minutes.");
+            Assert.Greater(cues[cues.Count - 1].Time, NailChart.RunSeconds - 5, "Nails come right up to the end.");
+            Stage stage1 = StageTable.Get(1);
+            Assert.IsTrue(cues.All(c => c.PerfectMs == stage1.PerfectMs && c.GoodMs == stage1.GoodMs), "The nail run never enters stage 2.");
+            for (int nail = 0; nail < nails; nail++)
                 Assert.AreEqual(NailChart.Hits, cues.Count(c => c.Variant == nail), "Nail " + nail);
             Assert.AreEqual(2, NailChart.ChairAt);
             Assert.AreEqual(3, NailChart.DeskAt);
@@ -65,7 +70,7 @@ namespace RhythmGame.Tests
             var results = new List<CueResult>();
             judge.Judged += results.Add;
             foreach (BeatCue cue in cues) judge.Press(cue.Pad, cue.Time);
-            judge.AdvanceTo(StageTable.ClearSeconds + 1);
+            judge.AdvanceTo(NailChart.RunSeconds + 1);
             Assert.AreEqual(0, results.Count(r => r.Outcome == CueOutcome.Missed));
             Assert.AreEqual(cues.Count, results.Count(r => r.Outcome == CueOutcome.Hit));
             Assert.IsTrue(judge.AllResolved);

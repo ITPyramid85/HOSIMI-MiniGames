@@ -2,8 +2,8 @@ using System.Collections.Generic;
 
 namespace RhythmGame
 {
-    // Seven heats forge one sword. Each glow is shorter than the last.
-    // Hammering blows are pad 2. Only the last blow, the finish, is crash 1.
+    // Seven heats forge one sword, and swords follow one another for the whole 8-minute run.
+    // Each glow in a sword is shorter than the last. Hammering blows are pad 2; the finish is crash 1.
     public static class SmithChart
     {
         public const double Bpm = 120, FirstCue = 2;
@@ -24,13 +24,14 @@ namespace RhythmGame
         public static List<BeatCue> Generate(int seed)
         {
             var cues = new List<BeatCue>();
-            double time = FirstCue;
-            for (int heat = 0; heat < HeatCount; heat++)
+            double time = FirstCue, last = StageTable.ClearSeconds - 2;
+            for (int heat = 0; time <= last; heat++)
             {
+                int step = heat % HeatCount;
                 cues.Add(new BeatCue
                 {
-                    Index = cues.Count, Time = time, Pad = heat == HeatCount - 1 ? CrashPad : StackPad, Variant = heat,
-                    PerfectMs = Perfect[heat], GoodMs = Glow[heat]
+                    Index = cues.Count, Time = time, Pad = step == HeatCount - 1 ? CrashPad : StackPad, Variant = heat,
+                    PerfectMs = Perfect[step], GoodMs = Glow[step]
                 });
                 time += BeatSeconds * 3;
             }
