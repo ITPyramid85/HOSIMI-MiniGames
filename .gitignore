@@ -36,7 +36,7 @@ gu_BurstDebugInformation_DoNotShip/
 *.mdb
 *.opendb
 *.VC.db
-UpgradeLog.htm
+UpgradeLog*.htm
 
 sysinfo.txt
 crashlytics-buildid.txt
